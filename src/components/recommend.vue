@@ -1,45 +1,101 @@
 <template>
-  <div class="recommend">
-    <!-- 在取得了slider_items的数据之后才挂载slider组件 -->
-    <div v-if="slider_items.length">
-      <slider>
-        <div v-for="slider_item in slider_items">
-          <a :href="slider_item.linkUrl">
-            <img :src="slider_item.picUrl">
-          </a>
-        </div>
-      </slider>
+    <div class="recommend">
+      <!-- 在取得了slider_items的数据之后才挂载slider组件 -->
+      <div v-if="slider_items.length">
+        <slider>
+          <div v-for="slider_item in slider_items">
+            <a :href="slider_item.linkUrl">
+              <img :src="slider_item.picUrl">
+            </a>
+          </div>
+        </slider>
+      </div>
+
+      <div class="songlist_head">推荐歌单</div>
+      <ul class="songlist">
+        <li v-for="songlist_item in songlist_items_2d">
+          <div v-for="item in songlist_item">
+            <img :src="item.imgurl"/>
+            <span>{{item.dissname}}</span>
+          </div>
+        </li>
+      </ul>
     </div>
-  </div>
 </template>
 
 <script type="text/ecmascript-6">
   import Slider from "base/slider";
-  import {slider_data} from "api/recommend.js";
+  import {slider_data,songlist_data} from "api/recommend.js";
   export default {
     data(){
       return {
-        slider_items: [],
+        slider_items: [],//这两个都是异步过程
+        songlist_items: [],
       }
     },
     created(){
       this.get_slider_data();
+      this.get_songlist_data();
     },
+    computed: {
+      songlist_items_2d: function(){
+        let items = [];
+        if(this.songlist_items.length){
+          this.songlist_items.forEach((value,index,array)=>{
+            if((index+1)%3 == 0){
+              items.push([array[index-2],array[index-1],array[index]]);
+            }
+          });
+        }
+        return items;
+      },
+    },
+
     methods: {
       get_slider_data(){
         slider_data().then((res)=>{
           if(res.code === 0){
             this.slider_items = res.data.slider;
-          }else{
-            console.log("slider-状态码:code:0-错误");
           }
         });
       },
+      get_songlist_data(){
+        songlist_data().then((res)=>{
+          if(res.code === 0){
+            this.songlist_items = res.data.list;
+          }
+        });
+      }
     },
     components: {Slider},
   }
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
+  @import "~common/stylus/variable.styl"
+
+  .songlist_head
+    border-left: 2px solid $theme-color-2
+    margin: 15px 0 12px 0
+    padding-left: 5px
+    font-size: 14px
+    color: #666
+    line-height: 14px
+  .songlist
+    >li
+      display: flex
+      justify-content: space-between
+      margin-bottom: 13px
+      div
+        width: 32.95%
+        img
+          width: 100%
+        span
+          display: block
+          width: 90%
+          font-size: 12px
+          color: #777
+          margin: 3px auto 0
+
 
 </style>

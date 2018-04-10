@@ -32,25 +32,16 @@
         this.set_slider_scroll();
         this.set_auto_slider();
       },20);
-
-      window.addEventListener("resize",()=>{
-        if(!this.slider){return;}
-        this.set_img_width(true);
-        this.slider.refresh();
-      },false);
     },
     methods: {
       set_img_width(is_resize){
         //this.$refs只有在mounted后才能的得到应有的值.
         let bscroll = this.$refs.bscroll;
         let slider = this.$refs.slider;
-        let width = slider.clientWidth;
+        let width = bscroll.clientWidth;//宽度要去bscroll的宽度.
         let length = slider.children.length;
         let slider_num = is_resize ? length : length+2;
-        console.log(slider_num);
         this.children = slider.children;//children事实上是一个对象,这里不能用foreach方法.
-
-        bscroll.style.width = width + "px";
         slider.style.width = width*slider_num + "px";
         for(let i=0;i<length;i++){
           this.children[i].style.width = width + "px";
@@ -117,7 +108,7 @@
         width: $dots-size
         border-radius: 50%
         margin: 0 4px
-        background: rgba(50,50,50,0.5)
+        background: $theme-color-1
         &.active
           background: $theme-color-2
           opacity: 0.8

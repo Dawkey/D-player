@@ -23,7 +23,7 @@
   .tab
     display: flex
     justify-content: space-around
-    font-size: 13px
+    font-size: 14px
     >div
       color: #999
       padding: 8px 15px
