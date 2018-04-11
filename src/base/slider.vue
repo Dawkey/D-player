@@ -34,13 +34,13 @@
       },20);
     },
     methods: {
-      set_img_width(is_resize){
+      set_img_width(){
         //this.$refs只有在mounted后才能的得到应有的值.
         let bscroll = this.$refs.bscroll;
         let slider = this.$refs.slider;
         let width = bscroll.clientWidth;//宽度要去bscroll的宽度.
         let length = slider.children.length;
-        let slider_num = is_resize ? length : length+2;
+        let slider_num = length+2;
         this.children = slider.children;//children事实上是一个对象,这里不能用foreach方法.
         slider.style.width = width*slider_num + "px";
         for(let i=0;i<length;i++){

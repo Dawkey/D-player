@@ -1,10 +1,53 @@
 <template>
-
+  <div ref="scroll">
+    <slot></slot>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">
-  export default {
+  import Bscroll from "better-scroll";
 
+  export default {
+    data(){
+      return {
+        scroll: undefined,//初始化better-scroll的变量.
+      };
+    },
+    props: {
+      data: {
+        type: Array,
+        default: [],
+      }
+    },
+
+    mounted(){
+      setTimeout(()=>{
+        this.init_scroll();
+      },20);
+    },
+
+    watch: {
+      data(){
+        if(this.scroll){
+          this.refresh();
+        }
+      }
+    },
+
+    methods: {
+      init_scroll(){
+        if(!this.$refs.scroll){return;}
+        this.scroll = new Bscroll(this.$refs.scroll,{
+          probeType: 1,
+          click: true
+        });
+      },
+      refresh(){
+        if(this.scroll){
+          this.scroll.refresh();
+        }
+      }
+    }
   }
 </script>
 
