@@ -1,3 +1,4 @@
+import common_param from "common/js/common.js";
 import jsonp from "common/js/jsonp.js";
 import axios from "axios";
 
@@ -9,21 +10,13 @@ export function slider_data(){
 };
 
 export function songlist_data(){
-  let data = {
-    g_tk: 5381,
-    loginUin: 0,
-    hostUin: 0,
-    inCharset: "utf-8",
-    outCharset: "utf-8",
-    notice: 0,
-    platform: "yqq",
-    needNewCode: 0,
-    categoryId: 10000000,
-    sortId: 5,
-    sin: 0,
+  let data = Object.assign({},common_param,{
+    sin: 0,//sin和ein表示选取歌单的数目.
     ein: 29,
     format: "json",
-  };
+    categoryId: 10000000,
+    sortId: 5,
+  });
   return axios("/songlist",{
     params: data,
   }).then((res)=>{

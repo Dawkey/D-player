@@ -16,7 +16,7 @@
     props: {
       data: {
         type: Array,
-        default: [],
+        default: ()=>[],//对于props数组类型,默认值要用一个函数传值.
       }
     },
 
