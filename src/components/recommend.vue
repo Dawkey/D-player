@@ -36,6 +36,7 @@
   import Loading from "base/loading";
   import {slider_data,songlist_data} from "api/recommend";
   export default {
+    name: "Recommend",
     data(){
       return {
         slider_items: [],//这两个都是异步过程

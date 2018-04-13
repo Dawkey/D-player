@@ -1,4 +1,4 @@
-import common_param from "common/js/common.js";
+import common_param from "common/js/common_param.js";
 import jsonp from "common/js/jsonp.js";
 import axios from "axios";
 

@@ -8,6 +8,7 @@
   import Bscroll from "better-scroll";
 
   export default {
+    name: "Scroll",
     data(){
       return {
         scroll: undefined,//初始化better-scroll的变量.

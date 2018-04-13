@@ -16,6 +16,7 @@
   import {addClassName} from "common/js/dom.js";
 
   export default {
+    name: "Slider",
     data(){
       return {
         slider: undefined,//Bscroll实例
