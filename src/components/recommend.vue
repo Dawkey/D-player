@@ -2,19 +2,18 @@
   <div class="recommend">
     <loading class="loading-container" v-show="!songlist_items_2d.length"></loading>
     <!-- 在取得了slider_items的数据之后才挂载slider组件 -->
-    <scroll class="scroll-container" ref="scroll" :data="songlist_items_2d">
+    <scroll class="scroll-container">
 
       <div>
         <div v-if="slider_items.length">
           <slider>
             <div v-for="slider_item in slider_items">
               <a :href="slider_item.linkUrl">
-                <img :src="slider_item.picUrl" @load="slider_ready">
+                <img :src="slider_item.picUrl">
               </a>
             </div>
           </slider>
         </div>
-
         <div class="songlist_head">推荐歌单</div>
         <ul class="songlist">
           <li v-for="songlist_item in songlist_items_2d">
@@ -41,7 +40,6 @@
       return {
         slider_items: [],//这两个都是异步过程
         songlist_items: [],
-        slider_is_ready: false,
       }
     },
     components: {Slider,Scroll,Loading},
@@ -78,12 +76,6 @@
           }
         });
       },
-      slider_ready(){
-        if(!this.slider_is_ready){
-          this.slider_is_ready = true;
-          this.$refs.scroll.refresh();
-        }
-      }
     },
   }
 </script>
@@ -93,7 +85,7 @@
 
   .recommend
     position: fixed
-    top: 98px
+    top: 90px
     bottom: 0//这个bottom很有必要
     width: 100%
     .loading-container
@@ -101,14 +93,12 @@
       width: 100%
       top: 38%
     .scroll-container
-      height: 100%
-      overflow: hidden
       .songlist_head
         border-left: 2px solid $theme-color-2
         margin: 15px 0 12px 0
         padding-left: 5px
-        font-size: 16px
-        line-height: 16px
+        font-size: 14px
+        line-height: 14px
         color: #666
       .songlist
         >li

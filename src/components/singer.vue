@@ -63,12 +63,10 @@
 
   .singer
     position: fixed
-    top: 98px
+    top: 94px
     bottom: 0
     width: 100%
     .scroll-container
-      height: 100%
-      overflow: hidden
       .singer-list
         li
           display: flex
