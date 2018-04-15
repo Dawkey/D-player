@@ -1,22 +1,20 @@
 <template>
-  <div class="singer">
-    <Scroll class="scroll-container">
-      <div>
-        <ul class="singer-list">
-          <li v-for="singer_item in singer_items">
-            <div class="page">
-              <img v-lazy="singer_item.url"/>
-            </div>
-            <div class="name">
-              {{singer_item.name}}
-              <img src="/static/img/player.png" @click="to_singer_detail(singer_item)"/>
-            </div>
-          </li>
-        </ul>
-      </div>
-    </Scroll>
-    <router-view></router-view>
-  </div>
+  <Scroll :top="94">
+    <div class="singer">
+      <ul class="singer-list">
+        <li v-for="singer_item in singer_items">
+          <div class="page">
+            <img v-lazy="singer_item.url"/>
+          </div>
+          <div class="name">
+            {{singer_item.name}}
+            <img src="/static/img/player.png" @click="to_singer_detail(singer_item)"/>
+          </div>
+        </li>
+      </ul>
+      <router-view></router-view>
+    </div>
+  </Scroll>
 </template>
 
 <script type="text/ecmascript-6">
@@ -62,32 +60,27 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
 
   .singer
-    position: fixed
-    top: 94px
-    bottom: 0
-    width: 100%
-    .scroll-container
-      .singer-list
-        li
+    .singer-list
+      li
+        display: flex
+        .page
+          width: 16%
+          margin: 3px 0
+          >img
+            width: 100%
+        .name
           display: flex
-          .page
-            width: 16%
-            margin: 3px 0
-            >img
-              width: 100%
-          .name
-            display: flex
-            align-items: center
-            justify-content: space-between
-            box-sizing: border-box
-            padding: 0 30px 0 40px
-            width: 83%
-            font-size: 14px
-            color: #666
-            box-shadow: 0 2px 2px -2px #ccc
-            >img
-              width: 27px
-              height: @width
+          align-items: center
+          justify-content: space-between
+          box-sizing: border-box
+          padding: 0 30px 0 40px
+          width: 83%
+          font-size: 14px
+          color: #666
+          box-shadow: 0 2px 2px -2px #ccc
+          >img
+            width: 27px
+            height: @width
 
 
 </style>

@@ -1,32 +1,30 @@
 <template>
-  <div class="recommend">
-    <loading class="loading-container" v-show="!songlist_items_2d.length"></loading>
-    <!-- 在取得了slider_items的数据之后才挂载slider组件 -->
-    <scroll class="scroll-container">
+  <scroll :top="90">
+    <div class="recommend">
 
-      <div>
-        <div v-if="slider_items.length">
-          <slider>
-            <div v-for="slider_item in slider_items">
-              <a :href="slider_item.linkUrl">
-                <img :src="slider_item.picUrl">
-              </a>
-            </div>
-          </slider>
-        </div>
-        <div class="songlist_head">推荐歌单</div>
-        <ul class="songlist">
-          <li v-for="songlist_item in songlist_items_2d">
-            <div v-for="item in songlist_item">
-              <img v-lazy="item.imgurl"/>
-              <span>{{item.dissname}}</span>
-            </div>
-          </li>
-        </ul>
+      <loading class="loading-container" v-show="!songlist_items_2d.length"></loading>
+
+      <div v-if="slider_items.length">
+        <slider>
+          <div v-for="slider_item in slider_items">
+            <a :href="slider_item.linkUrl">
+              <img :src="slider_item.picUrl">
+            </a>
+          </div>
+        </slider>
       </div>
+      <div class="songlist_head">推荐歌单</div>
+      <ul class="songlist">
+        <li v-for="songlist_item in songlist_items_2d">
+          <div v-for="item in songlist_item">
+            <img v-lazy="item.imgurl"/>
+            <span>{{item.dissname}}</span>
+          </div>
+        </li>
+      </ul>
 
-    </scroll>
-  </div>
+    </div>
+  </scroll>
 </template>
 
 <script type="text/ecmascript-6">
@@ -84,37 +82,32 @@
   @import "~common/stylus/variable.styl"
 
   .recommend
-    position: fixed
-    top: 90px
-    bottom: 0//这个bottom很有必要
-    width: 100%
     .loading-container
       position: absolute
       width: 100%
       top: 38%
-    .scroll-container
-      .songlist_head
-        border-left: 2px solid $theme-color-2
-        margin: 15px 0 12px 0
-        padding-left: 5px
-        font-size: 14px
-        line-height: 14px
-        color: #666
-      .songlist
-        >li
-          display: flex
-          justify-content: space-between
-          padding-bottom: 13px
-          div
-            width: 32.95%
-            img
-              width: 100%
-            span
-              display: block
-              width: 90%
-              font-size: 12px
-              color: #777
-              margin: 3px auto 0
+    .songlist_head
+      border-left: 2px solid $theme-color-2
+      margin: 15px 0 12px 0
+      padding-left: 5px
+      font-size: 14px
+      line-height: 14px
+      color: #666
+    .songlist
+      >li
+        display: flex
+        justify-content: space-between
+        padding-bottom: 13px
+        div
+          width: 32.95%
+          img
+            width: 100%
+          span
+            display: block
+            width: 90%
+            font-size: 12px
+            color: #777
+            margin: 3px auto 0
 
 
 </style>
