@@ -6,18 +6,21 @@
     <keep-alive>
       <router-view></router-view>
     </keep-alive>
+    <player></player>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import DHeader from "components/d-header";
   import Tab from "components/tab";
+  import Player from "components/player";
 
   export default{
     name: "App",
     components: {
       DHeader,
-      Tab
+      Tab,
+      Player
     },
   }
 

@@ -1,55 +1,55 @@
 <template>
-  <transition name="slider">
-    <div class="singer-detail">
-    <div class="header">
-      <div class="back" @click="back">
-        <img src="/static/img/back.png">
+  <div class="singer-detail">
+  <div class="header">
+    <div class="back" @click="back">
+      <img src="/static/img/back.png">
+    </div>
+    <div class="header-icon" v-if="header_flag">
+      <img src="/static/img/d-player.png"/>
+    </div>
+    <div class="header-text" v-else>
+      {{singer.name}}
+    </div>
+  </div>
+  <scroll :top="50" class="scroll-container" @scroll.native="header_change">
+    <div class="content">
+      <img class="content-background" :src="singer.url">
+      <div class="page">
+        <img :src="singer.url">
       </div>
-      <div class="header-content">
-        <img src="/static/img/d-player.png"/>
+      <div class="page-right">
+        <div class="name">
+          <img src="/static/img/singer.png">
+          {{singer.name}}
+        </div>
+        <div class="player">
+          <img src="/static/img/player-2.png">
+          播放全部
+        </div>
       </div>
     </div>
-    <scroll :top="50" class="scroll-container">
-      <div class="content">
-        <img class="content-background" :src="singer.url">
-        <div class="page">
-          <img :src="singer.url">
-        </div>
-        <div class="page-right">
-          <div class="name">
-            <img src="/static/img/singer.png">
-            {{singer.name}}
+    <div class="song-list">
+      <ul>
+        <li v-for="(song_item,index) in song_items">
+          <div class="index">
+            {{index + 1}}
           </div>
-          <div class="player">
-            <img src="/static/img/player-2.png">
-            播放全部
+          <div class="content">
+              <div class="name">
+                {{song_item.name}}
+              </div>
+              <div class="album">
+                {{song_item.singer}} - {{song_item.album}}
+              </div>
           </div>
-        </div>
-      </div>
-      <div class="song-list">
-        <ul>
-          <li v-for="(song_item,index) in song_items">
-            <div class="index">
-              {{index + 1}}
-            </div>
-            <div class="content">
-                <div class="name">
-                  {{song_item.name}}
-                </div>
-                <div class="album">
-                  {{song_item.singer}} - {{song_item.album}}
-                </div>
-            </div>
-            <div class="time">
-              {{song_item.time_minute}}
-            </div>
-          </li>
-        </ul>
-      </div>
-    </scroll>
-  </div>
-  </transition>
-
+          <div class="time">
+            {{song_item.time_minute}}
+          </div>
+        </li>
+      </ul>
+    </div>
+  </scroll>
+</div>
 </template>
 
 <script type="text/ecmascript-6">
@@ -62,6 +62,7 @@
     data(){
       return {
         song_items: [],
+        header_flag: true
       };
     },
     components: {Scroll},
@@ -84,17 +85,20 @@
       },
       back(){
         this.$router.back();
-      }
+      },
+      header_change(e){
+        if(e.target.scrollTop > 200){
+          this.header_flag = false;
+        }else{
+          this.header_flag = true;
+        }
+      },
     },
   }
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable.styl"
-  .slider-enter-active,.slider-leave-active
-    transition: all 0.2s
-  .slider-enter,.slider-leave-to
-    transform: translateY(100%)
 
   .singer-detail
     position: fixed
@@ -117,7 +121,7 @@
         left: 13px
         img
           width: 100%
-      .header-content
+      .header-icon
         width: 27px
         img
           width: 100%
@@ -129,6 +133,7 @@
         padding: 20px
         box-sizing: border-box
         overflow: hidden
+        background: rgba(0,0,0,0.3)
         .content-background
           position: absolute
           z-index: 5
@@ -158,6 +163,7 @@
             font-size: 20px
             display: flex
             align-items: center
+            margin-left: 20px
             img
               height: 23px
               width: 23px
