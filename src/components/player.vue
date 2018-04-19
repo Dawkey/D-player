@@ -1,13 +1,13 @@
 <template>
-  <div class="player">
-    <div class="player_full">
-      <img class="player-background" src="https://y.gtimg.cn/music/photo_new/T002R300x300M000003bSL0v4bpKAx.jpg?max_age=2592000"/>
+  <div class="player" v-show="play_list.length">
+    <div class="player_full" v-show="full_screen">
+      <img class="player-background" :src="play_song.img"/>
       <div class="header">
-        <div class="back">
+        <div class="back" @click="to_player_mini">
           <i class="icon-back"></i>
         </div>
         <div class="song_name">
-          等你下课
+          {{play_song.name}}
         </div>
       </div>
       <div class="disc">
@@ -15,7 +15,7 @@
           <img src="/static/img/disc_neddle.png"/>
         </div>
         <div class="disc_pan">
-          <img src="https://y.gtimg.cn/music/photo_new/T002R300x300M000003bSL0v4bpKAx.jpg?max_age=2592000">
+          <img :src="play_song.img">
         </div>
       </div>
       <div class="bottom">
@@ -37,9 +37,9 @@
             </i>
           </div>
           <div class="player_control">
-            <i class="icon-player_prev"></i>
-            <i class="icon-player_pause"></i>
-            <i class="icon-player_next"></i>
+            <i class="icon-player_prev" @click="prev_song"></i>
+            <i :class="toggle_icon" @click="toggle_playing"></i>
+            <i class="icon-player_next" @click="next_song"></i>
           </div>
           <div class="song_list">
             <i class="icon-player_list"></i>
@@ -47,31 +47,133 @@
         </div>
       </div>
     </div>
-    <div class="player_mini">
+    <div class="player_mini" v-show="!full_screen" @click="to_player_full">
       <div class="left">
         <div class="page">
-          <img src="https://y.gtimg.cn/music/photo_new/T002R300x300M000003bSL0v4bpKAx.jpg?max_age=2592000">
+          <img :src="play_song.img">
         </div>
         <div class="song_name">
           <div class="name">
-            等你下课
+            {{play_song.name}}
           </div>
           <div class="singer">
-            周杰伦
+            {{play_song.singer}}
           </div>
         </div>
       </div>
       <div class="right">
-        <i class="icon-player_play"></i>
+        <i :class="toggle_icon" @click.stop="toggle_playing"></i>
         <i class="icon-player_list"></i>
       </div>
     </div>
+    <audio :src="play_song.audio" ref="audio" @canplay="audio_ready">
+    </audio>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import {mapGetters,mapMutations,mapActions} from "vuex";
   export default {
     name: "Player",
+    data(){
+      return {
+        audio_is_ready: false,
+      };
+    },
+    computed: {
+      ...mapGetters([
+        "play_list",
+        "play_song",
+        "full_screen",
+        "playing",
+        "play_index"
+      ]),
+
+      //控制播放和暂停图标
+      toggle_icon(){
+        return this.playing ? "icon-player_pause" : "icon-player_play";
+      },
+    },
+    mounted(){
+    },
+    methods: {
+      ...mapMutations([
+        "set_full_screen",
+        "set_playing",
+        "set_play_index",
+      ]),
+      ...mapActions([
+        "set_song_audio",
+      ]),
+
+      to_player_mini(){
+        this.set_full_screen(false);
+      },
+      to_player_full(){
+        this.set_full_screen(true);
+      },
+
+      //控制播放和暂停
+      toggle_playing(){
+        this.set_playing(!this.playing);
+      },
+
+      //上一首歌
+      prev_song(){
+        let index = this.play_index;
+        if(index <= 0){
+          index = this.play_list.length - 1;
+        }else{
+          index = index - 1;
+        }
+        this.set_play_index(index);
+        this.audio_is_ready = false;
+        if(!this.playing){
+          this.set_playing(true);
+        }
+        if(this.play_song.audio == ""){
+          this.set_song_audio();
+        }
+      },
+
+      //下一首歌
+      next_song(){
+        let index = this.play_index;
+        if(index >= this.play_list.length - 1){
+          index = 0;
+        }else{
+          index = index + 1;
+        }
+        this.set_play_index(index);
+        this.audio_is_ready = false;
+        if(!this.playing){
+          this.set_playing(true);
+        }
+        if(this.play_song.audio == ""){
+          this.set_song_audio();
+        }
+      },
+
+      //记录audio准备好了
+      audio_ready(){
+        this.audio_is_ready = true;
+      }
+    },
+    watch: {
+
+      //每当audio_is_ready从false跳到true时,同时playing状态为true时,让audio播放.
+      audio_is_ready(){
+        if(this.audio_is_ready && this.playing){
+          this.$refs.audio.play();
+        }
+      },
+      playing(){
+        let audio = this.$refs.audio;
+        if(this.audio_is_ready){
+          this.playing ? audio.play() : audio.pause();
+        }
+      }
+    }
   }
 </script>
 
@@ -80,15 +182,13 @@
   @import "~common/stylus/variable.styl"
 
   .player
-    position: fixed
-    top: 0
-    bottom: 0
-    width: 100%
-    height: 100%
-    background: #555
     .player_full
-      // display: none
-      position: relative
+      position: fixed
+      top: 0
+      bottom: 0
+      width: 100%
+      height: 100%
+      background: #555
       width: 100%
       height: 100%
 
@@ -107,17 +207,14 @@
         align-items: center
         justify-content: center
         height: 50px
-        margin: 0 20px
         color: $theme-color-1
         box-shadow: 0px 1px 1px -1px rgba(255,255,255,0.1)
         .back
           position: absolute
-          top: 0
-          left: 0
-          width: 26px
-          >i
-            font-size: 26px
-            line-height: 50px
+          left: 15px
+          i
+            display: block
+            font-size: 25px
       .disc
         position: relative
         overflow: hidden
@@ -204,10 +301,9 @@
               font-size: 47px
               opacity: 0.6
     .player_mini
-      position: absolute
+      position: fixed
       bottom: 0
       display: flex
-      display: none
       justify-content: space-between
       width: 100%
       height: 50px

@@ -1,8 +1,7 @@
 <template>
   <div class="d-header">
-    <div class="icon">
-      <img src="/static/img/d-player.png">
-    </div>
+    <i class="icon-logo">
+    </i>
   </div>
 </template>
 
@@ -20,9 +19,7 @@
     justify-content: center
     align-items: center
     background: $theme-color-2
-    .icon
-      width: 27px
-      img
-        width: 100%
+    >i
+      font-size: 25px
 
 </style>

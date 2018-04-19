@@ -8,7 +8,7 @@
           </div>
           <div class="name">
             {{singer_item.name}}
-            <img src="/static/img/player.png" @click="to_singer_detail(singer_item)"/>
+            <i class="icon-player_play" @click="to_singer_detail(singer_item)"></i>
           </div>
         </li>
       </ul>
@@ -34,6 +34,9 @@
       this.get_singer_data();
     },
     methods: {
+      ...mapMutations(["set_singer"]),
+
+      //取得歌手数据
       get_singer_data(){
         singer_data().then((res)=>{
           if(res.code == 0){
@@ -44,15 +47,14 @@
           }
         });
       },
+
+      //跳转到歌手详情页面
       to_singer_detail(class_singer){
         this.$router.push({
           path: `/singer/${class_singer.id}`,
         });
         this.set_singer(class_singer);
       },
-      ...mapMutations({
-        set_singer: "set_singer",
-      }),
     }
   }
 </script>
@@ -78,9 +80,9 @@
           font-size: 14px
           color: #666
           box-shadow: 0 2px 2px -2px #ccc
-          >img
-            width: 27px
-            height: @width
+          >i
+            font-size: 25px
+            color: #666
 
 
 </style>

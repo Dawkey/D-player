@@ -2,11 +2,10 @@
   <div class="singer-detail">
   <div class="header">
     <div class="back" @click="back">
-      <img src="/static/img/back.png">
+      <i class="icon-back"></i>
     </div>
-    <div class="header-icon" v-if="header_flag">
-      <img src="/static/img/d-player.png"/>
-    </div>
+    <i class="icon-logo" v-if="header_flag">
+    </i>
     <div class="header-text" v-else>
       {{singer.name}}
     </div>
@@ -19,18 +18,18 @@
       </div>
       <div class="page-right">
         <div class="name">
-          <img src="/static/img/singer.png">
+          <i class="icon-singer"></i>
           {{singer.name}}
         </div>
         <div class="player">
-          <img src="/static/img/player-2.png">
+          <i class="icon-player_play"></i>
           播放全部
         </div>
       </div>
     </div>
     <div class="song-list">
       <ul>
-        <li v-for="(song_item,index) in song_items">
+        <li v-for="(song_item,index) in song_items" @click="to_player(song_items,index)">
           <div class="index">
             {{index + 1}}
           </div>
@@ -53,7 +52,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import {mapGetters} from "vuex";
+  import {mapGetters,mapActions} from "vuex";
   import {singer_detail_data} from "api/singer_detail";
   import class_song from "common/js/class_song";
   import Scroll from "base/scroll";
@@ -70,9 +69,18 @@
       this.get_detail_data();
     },
     computed: {
-      ...mapGetters(["singer"]),
+      ...mapGetters([
+        "singer",
+        "play_song"
+      ]),
     },
     methods: {
+      ...mapActions([
+        "set_player",
+        "set_song_audio"
+      ]),
+
+      //取得歌曲数据
       get_detail_data(){
         singer_detail_data(this.singer.id).then((res)=>{
           if(res.code == 0){
@@ -83,14 +91,26 @@
           }
         });
       },
+
+      //返回
       back(){
         this.$router.back();
       },
+
+      //控制滚动条移动时,头部元素的变化
       header_change(e){
         if(e.target.scrollTop > 200){
           this.header_flag = false;
         }else{
           this.header_flag = true;
+        }
+      },
+
+      //跳转到player播放器
+      to_player(list,index){
+        this.set_player({list,index});
+        if(this.play_song.audio == ""){
+          this.set_song_audio();
         }
       },
     },
@@ -114,17 +134,12 @@
       height: 50px
       color: $theme-color-1
       background: $theme-color-2
+      i
+        display: block
+        font-size: 25px
       .back
         position: absolute
-        width: 26px
-        top: ((50px-@width)/2)
-        left: 13px
-        img
-          width: 100%
-      .header-icon
-        width: 27px
-        img
-          width: 100%
+        left: 15px
     >.scroll-container
       >.content
         position: relative
@@ -133,7 +148,7 @@
         padding: 20px
         box-sizing: border-box
         overflow: hidden
-        background: rgba(0,0,0,0.3)
+        background: #555
         .content-background
           position: absolute
           z-index: 5
@@ -160,13 +175,13 @@
           padding-top: 30px
           color: $theme-color-1
           .name,.player
-            font-size: 20px
+            font-size: 19px
             display: flex
             align-items: center
             margin-left: 20px
-            img
-              height: 23px
-              width: 23px
+            opacity: 0.7
+            i
+              font-size: 20px
               margin-right: 5px
           .player
             font-size: 14px
@@ -174,9 +189,9 @@
             padding: 5px 10px
             border-radius: 5px
             background: rgba(218, 203, 203,0.5)
-            img
-              height: 20px
-              width: 20px
+            i
+              font-size: 15px
+
       >.song-list
         ul
           li

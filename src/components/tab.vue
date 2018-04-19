@@ -21,7 +21,7 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable.styl"
 
-  .tab
+  .tab 
     display: flex
     height: 40px
     align-items: center
