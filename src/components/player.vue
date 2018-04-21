@@ -14,21 +14,18 @@
         <div class="disc_neddle">
           <img src="/static/img/disc_neddle.png"/>
         </div>
-        <div class="disc_pan">
+        <div class="disc_pan" :class="toggle_disc">
           <img :src="play_song.img">
         </div>
       </div>
       <div class="bottom">
         <div class="bar">
           <div class="active_time">
-            00:00
+            {{current_time}}
           </div>
-          <div class="bar_box">
-            <div class="bar_pan">
-            </div>
-          </div>
+          <progress-bar :precent="precent"></progress-bar>
           <div class="total_time">
-            01:39
+            {{this.play_song.time_minute}}
           </div>
         </div>
         <div class="button">
@@ -73,13 +70,19 @@
 
 <script type="text/ecmascript-6">
   import {mapGetters,mapMutations,mapActions} from "vuex";
+  import {time_minute} from "common/js/common_function";
+  import ProgressBar from "base/ProgressBar";
   export default {
     name: "Player",
     data(){
       return {
         audio_is_ready: false,
+        timer: null,
+        current_time: "00:00",
+        precent: 0,
       };
     },
+    components: {ProgressBar},
     computed: {
       ...mapGetters([
         "play_list",
@@ -93,8 +96,16 @@
       toggle_icon(){
         return this.playing ? "icon-player_pause" : "icon-player_play";
       },
+
+      //控制唱片的旋转
+      toggle_disc(){
+        let state = this.playing ? "play" : "pause";
+        let animation = "rotate_" + (this.play_index % 2);
+        return state + " " + animation;
+      },
     },
     mounted(){
+      this.$refs.audio.volume = 0.2;
     },
     methods: {
       ...mapMutations([
@@ -127,7 +138,7 @@
           index = index - 1;
         }
         this.set_play_index(index);
-        this.audio_is_ready = false;
+        this.time_clear();
         if(!this.playing){
           this.set_playing(true);
         }
@@ -145,7 +156,7 @@
           index = index + 1;
         }
         this.set_play_index(index);
-        this.audio_is_ready = false;
+        this.time_clear();
         if(!this.playing){
           this.set_playing(true);
         }
@@ -157,7 +168,17 @@
       //记录audio准备好了
       audio_ready(){
         this.audio_is_ready = true;
+      },
+
+      time_update(){
+        this.timer = setInterval(()=>{
+          this.current_time = time_minute(this.$refs.audio.currentTime);
+        },1000);
+      },
+      time_clear(){
+        clearInterval(this.timer);
       }
+
     },
     watch: {
 
@@ -165,13 +186,27 @@
       audio_is_ready(){
         if(this.audio_is_ready && this.playing){
           this.$refs.audio.play();
+          this.time_update();
         }
+      },
+      play_song(){
+        this.audio_is_ready = false;
       },
       playing(){
         let audio = this.$refs.audio;
         if(this.audio_is_ready){
+          if(this.playing){
+            audio.play();
+            this.time_update();
+          }else{
+            audio.pause();
+            this.time_clear();
+          }
           this.playing ? audio.play() : audio.pause();
         }
+      },
+      current_time(){
+        this.precent = parseInt(this.$refs.audio.currentTime)/this.play_song.time;
       }
     }
   }
@@ -181,6 +216,19 @@
 
   @import "~common/stylus/variable.styl"
 
+  @keyframes rotate_0
+    0%
+      transform: rotate(0)
+    100%
+      transform: rotate(360deg)
+
+  @keyframes rotate_1
+    0%
+      transform: rotate(0)
+    100%
+      transform: rotate(360deg)
+
+
   .player
     .player_full
       position: fixed
@@ -188,7 +236,7 @@
       bottom: 0
       width: 100%
       height: 100%
-      background: #555
+      background: #333
       width: 100%
       height: 100%
 
@@ -238,6 +286,14 @@
           background-image: url(/static/img/disc_pan.png)
           background-size: cover
           margin: 72px auto 0
+          &.rotate_0
+            animation: rotate_0 35s linear infinite
+          &.rotate_1
+            animation: rotate_1 35s linear infinite
+          &.play
+            animation-play-state: running
+          &.pause
+            animation-play-state: paused
           img
             width: 46vw
             height: 46vw
@@ -259,27 +315,11 @@
           display: flex
           justify-content: space-between
           align-items: center
-          font-size: 9px
+          font-size: 10px
           color: rgba(245,245,245,0.4)
           margin: 0 20px 20px
           .active_time
             color: rgba(245,245,245,0.6)
-          .bar_box
-            position: relative
-            height: 2px
-            width: 100%
-            border-radius: 1px
-            margin: 0 5px
-            background: rgba(245,245,245,0.3)
-            .bar_pan
-              position: absolute
-              width: 4px
-              height: 4px
-              left: 0
-              border-radius: 50%
-              background: $theme-color-2
-              border: 4px solid #fff
-              top: -5px
         .button
           display: flex
           justify-content: space-between
