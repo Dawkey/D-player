@@ -58,6 +58,23 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           console.log(e);
         });
       });
+
+      app.get("/songlyric",(req,res)=>{
+        let url = "https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg";
+        axios.get(url,{
+          headers: {
+            referer: "https://y.qq.com/portal/player.html",
+          },
+          params: req.query,
+        }).then((response)=>{
+          if(typeof response.data == "string"){
+            let json = JSON.parse(response.data.slice(18,-1));
+            res.json(json);
+          }
+        }).catch((e)=>{
+          console.log(e);
+        });
+      });
     }
   },
   plugins: [

@@ -21,7 +21,7 @@
           <i class="icon-singer"></i>
           {{singer.name}}
         </div>
-        <div class="player">
+        <div class="player" @click="play_all_songs">
           <i class="icon-player_play"></i>
           播放全部
         </div>
@@ -113,6 +113,10 @@
           this.set_song_audio();
         }
       },
+
+      play_all_songs(){
+        this.to_player(this.song_items,0);
+      },
     },
   }
 </script>
@@ -148,7 +152,7 @@
         padding: 20px
         box-sizing: border-box
         overflow: hidden
-        background: #555
+        background: #666
         .content-background
           position: absolute
           z-index: 5
@@ -158,6 +162,7 @@
           height: 100%
           object-fit: cover
           filter: blur(35px)
+          opacity: 0.7
         .page
           position: relative
           z-index: 6

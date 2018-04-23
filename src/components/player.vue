@@ -23,19 +23,24 @@
           <div class="active_time">
             {{current_time}}
           </div>
-          <progress-bar :precent="precent"></progress-bar>
+          <progress-bar :precent="precent"
+            @time_change="active_time_change"
+            @audio_change="current_time_change"
+          >
+          </progress-bar>
           <div class="total_time">
             {{this.play_song.time_minute}}
           </div>
         </div>
         <div class="button">
           <div class="player_mode">
-            <i class="icon-player_random">
+            <i :class="toggle_mode_icon" @click="toggle_mode">
             </i>
+            <i class="loop_num" v-show="this.play_mode==1">1</i>
           </div>
           <div class="player_control">
             <i class="icon-player_prev" @click="prev_song"></i>
-            <i :class="toggle_icon" @click="toggle_playing"></i>
+            <i :class="toggle_playing_icon" @click="toggle_playing"></i>
             <i class="icon-player_next" @click="next_song"></i>
           </div>
           <div class="song_list">
@@ -59,59 +64,78 @@
         </div>
       </div>
       <div class="right">
-        <i :class="toggle_icon" @click.stop="toggle_playing"></i>
+        <i :class="toggle_playing_icon" @click.stop="toggle_playing"></i>
         <i class="icon-player_list"></i>
       </div>
     </div>
-    <audio :src="play_song.audio" ref="audio" @canplay="audio_ready">
+    <audio :src="play_song.audio" ref="audio"
+      @canplay="audio_ready"
+      @timeupdate="time_update"
+      @ended="ended"
+    >
     </audio>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import {mapGetters,mapMutations,mapActions} from "vuex";
-  import {time_minute} from "common/js/common_function";
+  import {time_minute,shuffle} from "common/js/common_function";
   import ProgressBar from "base/ProgressBar";
   export default {
     name: "Player",
     data(){
       return {
-        audio_is_ready: false,
-        timer: null,
+        audio_is_ready: false,//判断audio是否可以播放
         current_time: "00:00",
         precent: 0,
+        bar_is_move: false,//判断精度条是否正在移动
+        song_id: "",//记入前一首歌的id,以判断歌曲是否确实进行了切换
+        disc_rotate_num: 0,//用于disc旋转动画的数组
       };
     },
     components: {ProgressBar},
     computed: {
       ...mapGetters([
         "play_list",
+        "play_order_list",
         "play_song",
         "full_screen",
         "playing",
-        "play_index"
+        "play_index",
+        "play_mode"
       ]),
 
       //控制播放和暂停图标
-      toggle_icon(){
+      toggle_playing_icon(){
         return this.playing ? "icon-player_pause" : "icon-player_play";
       },
 
       //控制唱片的旋转
       toggle_disc(){
-        let state = this.playing ? "play" : "pause";
-        let animation = "rotate_" + (this.play_index % 2);
-        return state + " " + animation;
+        if(this.audio_is_ready){
+          let state = this.playing ? "play" : "pause";
+          let animation = "rotate_" + (this.disc_rotate_num % 2);
+          return state + " " + animation;
+        }
       },
+
+      //控制播放模式图标
+      toggle_mode_icon(){
+        let mode = this.play_mode;
+        return mode == 2 ? "icon-player_random" : "icon-player_order";
+      },
+
     },
     mounted(){
-      this.$refs.audio.volume = 0.2;
+      this.$refs.audio.volume = 0.1;
     },
     methods: {
       ...mapMutations([
         "set_full_screen",
         "set_playing",
         "set_play_index",
+        "set_play_mode",
+        "set_play_list"
       ]),
       ...mapActions([
         "set_song_audio",
@@ -129,6 +153,28 @@
         this.set_playing(!this.playing);
       },
 
+      //控制播放模式切换(改变play_list) (0表示顺序播放,1表示单曲循环,2表示随机播放)
+      toggle_mode(){
+        let mode = (this.play_mode + 1) % 3;
+        this.set_play_mode(mode);
+        if(this.play_mode == 1){
+          return;
+        }
+
+        let old_song = this.play_song;
+        let _list = this.play_order_list.slice();
+        if(this.play_mode == 0){
+          this.set_play_list(_list);
+        }else if(this.play_mode == 2){
+          this.set_play_list(shuffle(_list));
+        }
+
+        let index = this.play_list.findIndex((new_song)=>{
+          return new_song.id == old_song.id;
+        });
+        this.set_play_index(index);
+      },
+
       //上一首歌
       prev_song(){
         let index = this.play_index;
@@ -138,7 +184,6 @@
           index = index - 1;
         }
         this.set_play_index(index);
-        this.time_clear();
         if(!this.playing){
           this.set_playing(true);
         }
@@ -156,7 +201,6 @@
           index = index + 1;
         }
         this.set_play_index(index);
-        this.time_clear();
         if(!this.playing){
           this.set_playing(true);
         }
@@ -170,15 +214,35 @@
         this.audio_is_ready = true;
       },
 
-      time_update(){
-        this.timer = setInterval(()=>{
-          this.current_time = time_minute(this.$refs.audio.currentTime);
-        },1000);
+      //控制'显示时间'随着歌曲播放而变化.
+      time_update(e){
+        if(!this.bar_is_move){
+          this.current_time = time_minute(e.target.currentTime);
+        }
       },
-      time_clear(){
-        clearInterval(this.timer);
-      }
 
+      //一首歌曲播放完之后的相关逻辑
+      ended(){
+        //play_mode为 1时,表示单曲循环
+        if(this.play_mode == 1){
+          this.$refs.audio.currentTime = 0;
+          this.$refs.audio.play();
+        }else{
+          this.next_song();
+        }
+      },
+
+      //控制'显示时间'随着进度条拖动的变化.
+      active_time_change(precent){
+        this.bar_is_move = true;
+        this.current_time = time_minute(this.play_song.time * precent);
+      },
+
+      //控制歌曲'播放时间'随着进度条拖动和点击的变化.
+      current_time_change(precent){
+        this.bar_is_move = false;
+        this.$refs.audio.currentTime = this.play_song.time * precent;
+      },
     },
     watch: {
 
@@ -186,27 +250,28 @@
       audio_is_ready(){
         if(this.audio_is_ready && this.playing){
           this.$refs.audio.play();
-          this.time_update();
         }
       },
       play_song(){
+        if(this.play_song.id == this.song_id){
+          return;
+        }
         this.audio_is_ready = false;
+        this.song_id = this.play_song.id;
+        this.disc_rotate_num++;
       },
       playing(){
         let audio = this.$refs.audio;
         if(this.audio_is_ready){
-          if(this.playing){
-            audio.play();
-            this.time_update();
-          }else{
-            audio.pause();
-            this.time_clear();
-          }
           this.playing ? audio.play() : audio.pause();
         }
       },
+
+      //歌曲播放时current_time变化而引起的进度条的变化.
       current_time(){
-        this.precent = parseInt(this.$refs.audio.currentTime)/this.play_song.time;
+        if(!this.bar_is_move){
+          this.precent = parseInt(this.$refs.audio.currentTime)/this.play_song.time;
+        }
       }
     }
   }
@@ -248,7 +313,8 @@
         width: 100%
         height: 100%
         object-fit: cover
-        filter: blur(35px)
+        filter: blur(30px)
+        opacity: 0.3
       .header
         display: flex
         position: relative
@@ -328,6 +394,14 @@
           i
             font-size: 22px
             opacity: 0.5
+          .player_mode
+            position: relative
+            .loop_num
+              position: absolute
+              top: 3px
+              left: 7px
+              font-size: 5px
+              z-index : -1
           .player_control
             display: flex
             padding: 5px 2px
