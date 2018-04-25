@@ -18,6 +18,15 @@
           <img :src="play_song.img">
         </div>
       </div>
+      <div class="lyric">
+        <lyric
+          :songmid = "play_song.id"
+          :audio_is_ready = "audio_is_ready"
+          :lyric_time = "lyric_time"
+          @get_lyric_time = "get_lyric_time"
+        >
+        </lyric>
+      </div>
       <div class="bottom">
         <div class="bar">
           <div class="active_time">
@@ -81,6 +90,8 @@
   import {mapGetters,mapMutations,mapActions} from "vuex";
   import {time_minute,shuffle} from "common/js/common_function";
   import ProgressBar from "base/ProgressBar";
+  import Lyric from "base/lyric";
+
   export default {
     name: "Player",
     data(){
@@ -91,9 +102,10 @@
         bar_is_move: false,//判断精度条是否正在移动
         song_id: "",//记入前一首歌的id,以判断歌曲是否确实进行了切换
         disc_rotate_num: 0,//用于disc旋转动画的数组
+        lyric_time: 0,
       };
     },
-    components: {ProgressBar},
+    components: {ProgressBar,Lyric},
     computed: {
       ...mapGetters([
         "play_list",
@@ -242,7 +254,12 @@
       current_time_change(precent){
         this.bar_is_move = false;
         this.$refs.audio.currentTime = this.play_song.time * precent;
+        this.get_lyric_time();
       },
+
+      get_lyric_time(){
+        this.lyric_time = this.$refs.audio.currentTime * 1000;
+      }
     },
     watch: {
 
@@ -261,9 +278,9 @@
         this.disc_rotate_num++;
       },
       playing(){
-        let audio = this.$refs.audio;
         if(this.audio_is_ready){
-          this.playing ? audio.play() : audio.pause();
+          let $audio = this.$refs.audio;
+          this.playing ? $audio.play() : $audio.pause();
         }
       },
 
@@ -301,9 +318,9 @@
       bottom: 0
       width: 100%
       height: 100%
-      background: #333
       width: 100%
       height: 100%
+      background: #444
 
       .player-background
         position: absolute
@@ -314,7 +331,7 @@
         height: 100%
         object-fit: cover
         filter: blur(30px)
-        opacity: 0.3
+        opacity: 0.2
       .header
         display: flex
         position: relative
@@ -330,6 +347,7 @@
             display: block
             font-size: 25px
       .disc
+        display: none
         position: relative
         overflow: hidden
         .disc_neddle
@@ -373,6 +391,12 @@
             width: 100%
             background-image: url(/static/img/disc_light.png)
             background-size: cover
+      .lyric
+        position: absolute
+        top: 70px
+        bottom: 140px
+        width: 80%
+        left: 10%
       .bottom
         position: absolute
         width: 100%

@@ -1,10 +1,10 @@
 import common_param from "common/js/common_param.js";
 import axios from "axios";
 
-export function lyric_data(){
+export function lyric_data(id){
   let data = Object.assign({},common_param,{
     format: "json",
-    songmid: "001J5QJL1pRQYB",
+    songmid: id,
     pcachetime: +new Date(),
   });
   return axios("/songlyric",{
