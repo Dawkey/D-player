@@ -20,9 +20,11 @@
       </div>
       <div class="lyric">
         <lyric
-          :songmid = "play_song.id"
+          :song_id = "play_song.id"
+          :song_lyric = "play_song.lyric"
           :audio_is_ready = "audio_is_ready"
           :lyric_time = "lyric_time"
+          :playing = "playing"
           @get_lyric_time = "get_lyric_time"
         >
         </lyric>
@@ -254,6 +256,9 @@
       current_time_change(precent){
         this.bar_is_move = false;
         this.$refs.audio.currentTime = this.play_song.time * precent;
+        if(!this.playing){
+          this.set_playing(true);
+        }
         this.get_lyric_time();
       },
 

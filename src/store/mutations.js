@@ -24,6 +24,9 @@ const mutation = {
   },
   [types.set_play_audio](state,audio){
     state.play_list[state.play_index].audio = audio;
+  },
+  [types.set_play_lyric](state,lyric){
+    state.play_list[state.play_index].lyric = lyric;
   }
 };
 

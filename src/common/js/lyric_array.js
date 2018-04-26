@@ -8,6 +8,9 @@ class lyric {
 export default function lyric_to_array(str){
   let reg = /\[\d{2}:\d{2}\.\d{2}\][^\[\]\n]+/g;
   let reg_array = str.match(reg);
+  if(reg_array == null){
+    return [];
+  }
   let lyric_array = reg_array.map((value)=>{
     let split_array = value.split("]");
     let time_str = split_array[0];

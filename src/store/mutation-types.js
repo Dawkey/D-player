@@ -13,3 +13,5 @@ export const set_play_order_list = "set_play_order_list";
 export const set_play_index = "set_play_index";
 
 export const set_play_audio = "set_play_audio";
+
+export const set_play_lyric = "set_play_lyric";
