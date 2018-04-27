@@ -10,24 +10,27 @@
           {{play_song.name}}
         </div>
       </div>
-      <div class="disc">
-        <div class="disc_neddle">
-          <img src="/static/img/disc_neddle.png"/>
+      <div class="middle" @click="middle_click">
+        <div class="disc" v-show="!toggle_lyric">
+          <div class="disc_neddle">
+            <img src="/static/img/disc_neddle.png"/>
+          </div>
+          <div class="disc_pan" :class="toggle_disc">
+            <img :src="play_song.img">
+          </div>
         </div>
-        <div class="disc_pan" :class="toggle_disc">
-          <img :src="play_song.img">
+        <div class="lyric" v-show="toggle_lyric">
+          <lyric
+            :song_id = "play_song.id"
+            :song_lyric = "play_song.lyric"
+            :audio_is_ready = "audio_is_ready"
+            :lyric_time = "lyric_time"
+            :playing = "playing"
+            :toggle_lyric = "toggle_lyric"
+            @get_lyric_time = "get_lyric_time"
+          >
+          </lyric>
         </div>
-      </div>
-      <div class="lyric">
-        <lyric
-          :song_id = "play_song.id"
-          :song_lyric = "play_song.lyric"
-          :audio_is_ready = "audio_is_ready"
-          :lyric_time = "lyric_time"
-          :playing = "playing"
-          @get_lyric_time = "get_lyric_time"
-        >
-        </lyric>
       </div>
       <div class="bottom">
         <div class="bar">
@@ -105,6 +108,7 @@
         song_id: "",//记入前一首歌的id,以判断歌曲是否确实进行了切换
         disc_rotate_num: 0,//用于disc旋转动画的数组
         lyric_time: 0,
+        toggle_lyric: false,
       };
     },
     components: {ProgressBar,Lyric},
@@ -141,7 +145,7 @@
 
     },
     mounted(){
-      this.$refs.audio.volume = 0.1;
+      this.$refs.audio.volume = 0;
     },
     methods: {
       ...mapMutations([
@@ -157,6 +161,7 @@
 
       to_player_mini(){
         this.set_full_screen(false);
+        this.toggle_lyric = false;
       },
       to_player_full(){
         this.set_full_screen(true);
@@ -264,6 +269,10 @@
 
       get_lyric_time(){
         this.lyric_time = this.$refs.audio.currentTime * 1000;
+      },
+
+      middle_click(){
+        this.toggle_lyric = !this.toggle_lyric;
       }
     },
     watch: {
@@ -351,57 +360,61 @@
           i
             display: block
             font-size: 25px
-      .disc
-        display: none
-        position: relative
-        overflow: hidden
-        .disc_neddle
-          position: absolute
-          z-index: 11
-          top: 0
-          width: 110px
-          left: calc(50% - 18px)
-          height: 157px
-          img
-            width: 100%
-        .disc_pan
-          position: relative
-          z-index: 10
-          display: flex
-          align-items: center
-          justify-content: center
-          width: 75vw
-          height: 75vw
-          background-image: url(/static/img/disc_pan.png)
-          background-size: cover
-          margin: 72px auto 0
-          &.rotate_0
-            animation: rotate_0 35s linear infinite
-          &.rotate_1
-            animation: rotate_1 35s linear infinite
-          &.play
-            animation-play-state: running
-          &.pause
-            animation-play-state: paused
-          img
-            width: 46vw
-            height: 46vw
-            border-radius: 50%
-          &:before
-            content: ""
-            position: absolute
-            top: 0
-            left: 0
-            height: 100%
-            width: 100%
-            background-image: url(/static/img/disc_light.png)
-            background-size: cover
-      .lyric
+      .middle
         position: absolute
-        top: 70px
+        width: 100%
+        top: 50px
         bottom: 140px
-        width: 80%
-        left: 10%
+        .disc
+          position: relative
+          overflow: hidden
+          .disc_neddle
+            position: absolute
+            z-index: 11
+            top: 0
+            width: 110px
+            left: calc(50% - 18px)
+            height: 157px
+            img
+              width: 100%
+          .disc_pan
+            position: relative
+            z-index: 10
+            display: flex
+            align-items: center
+            justify-content: center
+            width: 75vw
+            height: 75vw
+            background-image: url(/static/img/disc_pan.png)
+            background-size: cover
+            margin: 72px auto 0
+            &.rotate_0
+              animation: rotate_0 35s linear infinite
+            &.rotate_1
+              animation: rotate_1 35s linear infinite
+            &.play
+              animation-play-state: running
+            &.pause
+              animation-play-state: paused
+            img
+              width: 46vw
+              height: 46vw
+              border-radius: 50%
+            &:before
+              content: ""
+              position: absolute
+              top: 0
+              left: 0
+              height: 100%
+              width: 100%
+              background-image: url(/static/img/disc_light.png)
+              background-size: cover
+        .lyric
+          position: absolute
+          top: 20px
+          bottom: 0
+          width: 80%
+          padding: 0 10%
       .bottom
         position: absolute
         width: 100%

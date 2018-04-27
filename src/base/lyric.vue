@@ -1,5 +1,8 @@
 <template>
-  <div class="lyric-contain" ref="lyric">
+  <div class="lyric-contain" ref="lyric"
+    @touchstart = "touch_start"
+    @touchend = "touch_end"
+  >
     <div class="half-space" ref="half_space">
     </div>
     <p ref="lyric_p" v-for="(lyric_item,item_index) in lyric_items" :class="{'active': item_index == index}">
@@ -26,6 +29,9 @@
         trans_items: [],
         timer: null,
         index: -1,
+        tween: null,
+        move_flag: false,
+        touch_timer: null,
       };
     },
     props: {
@@ -50,7 +56,11 @@
       playing: {
         type: Boolean,
         default: false
-      }
+      },
+      toggle_lyric: {
+        type: Boolean,
+        default: false
+      },
     },
     methods: {
       ...mapMutations([
@@ -107,9 +117,22 @@
         let $half_space = this.$refs.half_space;
         if(!$lyric_p){return;}
         let scroll_top = $lyric_p.offsetTop - $half_space.clientHeight;
-
-        TweenLite.to($lyric,0.7,{scrollTop: scroll_top});
-      }
+        this.tween = new TimelineMax();
+        this.tween.to($lyric,0.7,{scrollTop: scroll_top});
+      },
+      touch_start(){
+        clearTimeout(this.touch_timer);
+        this.move_flag = false;
+        if(this.tween == null){return;}
+        this.tween.clear();
+      },
+      touch_end(){
+        this.touch_timer = setTimeout(()=>{
+          if(this.toggle_lyric){
+            this.move_flag = true;
+          }
+        },2000)
+      },
     },
     watch: {
       audio_is_ready(){
@@ -117,9 +140,6 @@
           this.lyric_items = [];
           this.trans_items = [];
           clearTimeout(this.timer);
-          this.$nextTick(()=>{
-            this.$refs.lyric.scrollTop = 0;
-          });
           return;
         }
         if(JSON.stringify(this.song_lyric) == "{}"){
@@ -146,9 +166,20 @@
         }
       },
       index(){
+        if(!this.move_flag){return;}
         this.$nextTick(()=>{
           this.lyric_move();
         });
+      },
+      toggle_lyric(){
+        if(this.toggle_lyric){
+          this.move_flag = true;
+          this.$nextTick(()=>{
+            this.lyric_move();
+          });
+        }else{
+          this.move_flag = false;
+        }
       }
     }
   }
