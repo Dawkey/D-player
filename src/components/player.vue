@@ -1,7 +1,8 @@
 <template>
   <div class="player" v-show="play_list.length">
     <div class="player_full" v-show="full_screen">
-      <img class="player-background" :src="play_song.img"/>
+      <img class="player-background" :src="play_song.img" :class="{opacity: toggle_lyric}"/>
+      <div class="player-color"></div>
       <div class="header">
         <div class="back" @click="to_player_mini">
           <i class="icon-back"></i>
@@ -37,7 +38,7 @@
           <div class="active_time">
             {{current_time}}
           </div>
-          <progress-bar :precent="precent"
+          <progress-bar :precent="precent" :audio_is_ready="audio_is_ready"
             @time_change="active_time_change"
             @audio_change="current_time_change"
           >
@@ -64,6 +65,8 @@
       </div>
     </div>
     <div class="player_mini" v-show="!full_screen" @click="to_player_full">
+      <img class="player-background" :src="play_song.img"/>
+      <div class="player-color"></div>
       <div class="left">
         <div class="page">
           <img :src="play_song.img">
@@ -145,7 +148,7 @@
 
     },
     mounted(){
-      this.$refs.audio.volume = 0;
+      this.$refs.audio.volume = 0.1;
     },
     methods: {
       ...mapMutations([
@@ -246,6 +249,7 @@
         if(this.play_mode == 1){
           this.$refs.audio.currentTime = 0;
           this.$refs.audio.play();
+          this.get_lyric_time();
         }else{
           this.next_song();
         }
@@ -326,6 +330,28 @@
 
 
   .player
+
+    .player-background
+      position: absolute
+      z-index: -2
+      top: 0
+      left: 0
+      width: 100%
+      height: 100%
+      object-fit: cover
+      filter: blur(30px)
+      opacity: 0.4
+      &.opacity
+        opacity: 0.2
+    .player-color
+      position: absolute
+      z-index: -1
+      top: 0
+      left: 0
+      width: 100%
+      height: 100%
+      background: rgba(255,255,255,0.1)
+
     .player_full
       position: fixed
       top: 0
@@ -334,30 +360,20 @@
       height: 100%
       width: 100%
       height: 100%
-      background: #444
-
-      .player-background
-        position: absolute
-        z-index: -1
-        top: 0
-        left: 0
-        width: 100%
-        height: 100%
-        object-fit: cover
-        filter: blur(30px)
-        opacity: 0.2
+      background: $color-1
       .header
         display: flex
         position: relative
         align-items: center
         justify-content: center
         height: 50px
-        color: $theme-color-1
-        box-shadow: 0px 1px 1px -1px rgba(255,255,255,0.1)
+        color: $color-3
+        box-shadow: 0px 1px 1px -1px rgba(0,0,0,0.1)
         .back
           position: absolute
           left: 15px
           i
+            color: $color-3
             display: block
             font-size: 25px
       .middle
@@ -424,10 +440,10 @@
           justify-content: space-between
           align-items: center
           font-size: 10px
-          color: rgba(245,245,245,0.4)
+          color: $color-3
           margin: 0 20px 20px
           .active_time
-            color: rgba(245,245,245,0.6)
+            opacity: 0.8
         .button
           display: flex
           justify-content: space-between
@@ -435,7 +451,8 @@
           margin: 0 20px
           i
             font-size: 22px
-            opacity: 0.5
+            color: $color-3
+            opacity: 0.9
           .player_mode
             position: relative
             .loop_num
@@ -452,10 +469,9 @@
             width: 56%
             i:nth-child(odd)
               font-size: 36px
-              opacity: 0.7
             i:nth-child(2)
               font-size: 47px
-              opacity: 0.6
+              opacity: 0.9
     .player_mini
       position: fixed
       bottom: 0
@@ -463,10 +479,13 @@
       justify-content: space-between
       width: 100%
       height: 50px
-      background: rgba(255,255,255,0.95)
+      background: $color-1
+      overflow: hidden
+      .player-background
+        opacity: 0.6
       i
         font-size: 25px
-        color: #666
+        color: $color-4
         margin-left: 20px
       .left
         height: 100%
@@ -481,10 +500,11 @@
           margin-left: 15px
           .name
             font-size: 13px
-            color: #222
+            color: #000
           .singer
             font-size: 11px
             margin-top: 8px
+            color: $color-3
       .right
         display: flex
         align-items: center

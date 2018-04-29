@@ -2,17 +2,24 @@
   <div class="progress_bar" ref="progress_bar" @click="bar_click">
     <div class="bar" ref="bar">
     </div>
-    <div class="bar_pan" ref="bar_pan"
+    <div class="bar_pan" ref="bar_pan"  :class="{color: audio_is_ready}"
       @touchstart.prevent = "touch_start"
       @touchmove.prevent = "touch_move"
       @touchend = "touch_end"
       @click.stop = "pan_click"
     >
+      <loading class="loading" v-show = "!audio_is_ready"
+        icon_class = "icon-loading_3"
+        color = "#019fde"
+        :font_size = "9"
+      >
+      </loading>
     </div>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import Loading from "base/loading";
   export default {
     name: "ProgressBar",
     data(){
@@ -27,7 +34,12 @@
         type: Number,
         default: 0
       },
+      audio_is_ready: {
+        type: Boolean,
+        default: false
+      }
     },
+    components: {Loading},
     methods: {
       move(){
         this.$refs.bar.style.width = `${this.move_length}px`;
@@ -81,17 +93,19 @@
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
+  @import "~common/stylus/variable.styl"
+
   .progress_bar
     position: relative
     height: 2px
     width: 100%
     border-radius: 1px
     margin: 0 15px
-    background: rgba(245,245,245,0.3)
+    background: rgba(50,50,50,0.3)
     .bar
       height: 100%
       width: 0
-      background: #dacbcb
+      background: $color-4
     .bar_pan
       position: absolute
       left: -6px
@@ -99,6 +113,12 @@
       width: 4px
       height: 4px
       border-radius: 50%
-      background: #dacbcb
-      border: 4px solid #fff
+      background: $color-3
+      border: 4px solid $color-3
+      opacity: 0.75
+      display: flex
+      align-items: center
+      justify-content: center
+      &.color
+        background: $color-4
 </style>

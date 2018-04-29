@@ -1,5 +1,5 @@
 <template>
-  <Scroll :top="94">
+  <Scroll :top="90">
     <div class="singer">
       <ul class="singer-list">
         <li v-for="singer_item in singer_items">
@@ -60,9 +60,12 @@
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
+  @import "~common/stylus/variable.styl"
 
   .singer
     .singer-list
+      margin-top: 5px
+      padding: 0 1%
       li
         display: flex
         .page
@@ -70,6 +73,7 @@
           margin: 3px 0
           >img
             width: 100%
+            border-radius: 2px
         .name
           display: flex
           align-items: center

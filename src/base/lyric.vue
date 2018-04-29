@@ -3,14 +3,18 @@
     @touchstart = "touch_start"
     @touchend = "touch_end"
   >
-    <div class="half-space" ref="half_space">
-    </div>
+    <loading class="loading" v-show="!lyric_items.length"
+      icon_class = "icon-loading"
+      color = "rgb(1, 159, 222)"
+      :font_size = "30"
+    >
+    </loading>
+    <div class="half-space" ref="half_space"></div>
     <p ref="lyric_p" v-for="(lyric_item,item_index) in lyric_items" :class="{'active': item_index == index}">
       <span>{{lyric_item.text}}</span>
       <span v-if="trans_items.length">{{trans_items[item_index].text}}</span>
     </p>
-    <div class="half-space">
-    </div>
+    <div class="half-space"></div>
   </div>
 </template>
 
@@ -20,6 +24,7 @@
   import {Base64} from "js-base64";
   import {TweenMax} from "gsap";
   import lyric_array from "common/js/lyric_array";
+  import Loading from "base/loading";
 
   export default {
     name: "Lyric",
@@ -32,8 +37,10 @@
         tween: null,
         move_flag: false,
         touch_timer: null,
+        handle_timer: null,
       };
     },
+    components: {Loading},
     props: {
       song_id: {
         type: String,
@@ -67,19 +74,21 @@
         "set_play_lyric"
       ]),
       lyric_handle(_lyric){
-        let lyric = Base64.decode(_lyric.lyric);
-        let trans = Base64.decode(_lyric.trans);
-        this.lyric_items = lyric_array(lyric);
-        if(trans != ""){
-          let trans_items = lyric_array(trans);
-          if(trans_items.length == this.lyric_items.length){
-            this.trans_items = trans_items;
-          }else{
-            this.trans_items = [];
-            console.log("翻译歌词不匹配(╥╯^╰╥)");
+        this.handle_timer = setTimeout(()=>{
+          let lyric = Base64.decode(_lyric.lyric);
+          let trans = Base64.decode(_lyric.trans);
+          this.lyric_items = lyric_array(lyric);
+          if(trans != ""){
+            let trans_items = lyric_array(trans);
+            if(trans_items.length == this.lyric_items.length){
+              this.trans_items = trans_items;
+            }else{
+              this.trans_items = [];
+              console.log("翻译歌词不匹配(╥╯^╰╥)");
+            }
           }
-        }
-        this.$emit("get_lyric_time");
+          this.$emit("get_lyric_time");
+        },500);
       },
       timer_fn(){
         let i = this.index + 1;
@@ -139,7 +148,11 @@
         if(this.audio_is_ready == false){
           this.lyric_items = [];
           this.trans_items = [];
+          this.index = -1;
+          this.move_flag = true;
           clearTimeout(this.timer);
+          clearTimeout(this.touch_timer);
+          clearTimeout(this.handle_timer);
           return;
         }
         if(JSON.stringify(this.song_lyric) == "{}"){
@@ -186,10 +199,18 @@
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
+  @import "~common/stylus/variable.styl"
+
   .lyric-contain
+    position: relative
     height: 100%
     width: 100%
     overflow-y: scroll
+    .loading
+      position: absolute
+      top: 45%
+      width: 100%
+      justify-content: center
     .half-space
       height: 45%
       width: 100%
@@ -197,10 +218,11 @@
       text-align: center
       font-size: 14px
       letter-spacing: 1px
-      color: rgba(245,245,245,0.4)
-      margin: 18px 0
+      color: $color-3
+      margin: 16px 0
       &.active
-        color: rgba(245,245,245,0.8)
+        color: $color-4
       span
         display: block
+        margin-bottom: 3px
 </style>

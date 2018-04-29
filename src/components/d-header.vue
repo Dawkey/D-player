@@ -18,8 +18,9 @@
     height: 50px
     justify-content: center
     align-items: center
-    background: $theme-color-2
+    background: $color-2
     >i
       font-size: 25px
+      color: $color-4
 
 </style>
