@@ -11,7 +11,7 @@
     </loading>
     <div class="half-space" ref="half_space"></div>
     <p ref="lyric_p" v-for="(lyric_item,item_index) in lyric_items" :class="{'active': item_index == index}">
-      <span>{{lyric_item.text}}</span>
+      <span v-html="lyric_item.text"></span>
       <span v-if="trans_items.length">{{trans_items[item_index].text}}</span>
     </p>
     <div class="half-space"></div>
@@ -28,19 +28,25 @@
 
   export default {
     name: "Lyric",
+
+
     data(){
       return {
-        lyric_items: [],
-        trans_items: [],
-        timer: null,
-        index: -1,
-        tween: null,
+        lyric_items: [],//歌词数组
+        trans_items: [],//翻译歌词数组
+        timer: null,//歌词变化的定时器对象
+        index: -1,//""核心""变量,歌词的一切变化跟它有关,对应于歌词数组(lyric_items)中的index
+        tween: null,//TweenMax.js库对应的对象,控制歌词的运动
         move_flag: false,
         touch_timer: null,
         handle_timer: null,
       };
     },
+
+
     components: {Loading},
+
+
     props: {
       song_id: {
         type: String,
@@ -69,10 +75,16 @@
         default: false
       },
     },
+
+
     methods: {
+
       ...mapMutations([
         "set_play_lyric"
       ]),
+
+      //对歌词的加工处理---Base64转码,再通过lyric_array,把歌词加工为对应的数组,并赋给
+      //lyric_items
       lyric_handle(_lyric){
         this.handle_timer = setTimeout(()=>{
           let lyric = Base64.decode(_lyric.lyric);
@@ -90,6 +102,8 @@
           this.$emit("get_lyric_time");
         },500);
       },
+
+      //歌词变化的定时器函数,在到达下一句歌词时间时,对 index 加 1
       timer_fn(){
         let i = this.index + 1;
         let items = this.lyric_items;
@@ -100,6 +114,9 @@
           this.timer_fn();
         },interval);
       },
+
+      //在歌曲时间在受人为控制变化(拖动进度条)后,歌词也应该相应变化,set_lyric_time重新
+      //设置歌词定时器的时间
       set_lyric_time(){
         if(!this.lyric_items.length){
           return;
@@ -120,6 +137,8 @@
           this.timer_fn();
         },interval);
       },
+
+      //控制歌词的运动(通过TweenMax.js)
       lyric_move(){
         let $lyric = this.$refs.lyric;
         let $lyric_p = this.$refs.lyric_p[this.index];
@@ -129,6 +148,8 @@
         this.tween = new TimelineMax();
         this.tween.to($lyric,0.7,{scrollTop: scroll_top});
       },
+
+      //在触发touch事件后,歌词运动的相关逻辑.
       touch_start(){
         clearTimeout(this.touch_timer);
         this.move_flag = false;
@@ -142,8 +163,13 @@
           }
         },2000)
       },
+
     },
+
+
     watch: {
+
+      //对应于player组件里面audio_is_ready,在歌曲播放后才开始歌词运动,保证同步
       audio_is_ready(){
         if(this.audio_is_ready == false){
           this.lyric_items = [];
@@ -168,9 +194,13 @@
           this.lyric_handle(this.song_lyric);
         }
       },
+
+      //""核心变量"",受组件player的影响,在外部lyric_time变化后,触发set_lyric_time.
       lyric_time(){
         this.set_lyric_time();
       },
+
+      //在歌曲播放和暂停时的歌词变化的相关逻辑
       playing(){
         if(this.playing && this.audio_is_ready){
           this.$emit("get_lyric_time");
@@ -178,12 +208,17 @@
           clearTimeout(this.timer);
         }
       },
+
+      //index发生变化时,触发歌词运动函数
       index(){
         if(!this.move_flag){return;}
         this.$nextTick(()=>{
           this.lyric_move();
         });
       },
+
+      //对应于player组件的变量toggle_lyric(控制歌词的显示和隐藏),只在歌词显示时,才控制
+      //歌词运动,减少性能损耗.
       toggle_lyric(){
         if(this.toggle_lyric){
           this.move_flag = true;
@@ -194,7 +229,10 @@
           this.move_flag = false;
         }
       }
+
     }
+
+
   }
 </script>
 

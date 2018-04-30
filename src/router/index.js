@@ -8,6 +8,7 @@ const Recommend = () => import("components/recommend");
 const Singer = () => import("components/singer");
 const Rank = () => import("components/rank");
 
+const SonglistDetail = () => import("components/songlist-detail");
 const SingerDetail = () => import("components/singer-detail");
 
 
@@ -15,7 +16,14 @@ export default new Router({
   //这里是routes不是routers!!!!!!!!!!!!!!!!!!!(T＿T)
   routes: [
     {path: "/",redirect: "/singer"},//重新定向到"/recommend"
-    {path: "/recommend",component: Recommend},
+    {
+      path: "/recommend",
+      component: Recommend,
+      children: [{
+        path: ":id",
+        component: SonglistDetail,
+      }],
+    },
     {
       path: "/singer",
       component: Singer,

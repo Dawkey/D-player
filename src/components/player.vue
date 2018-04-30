@@ -271,10 +271,12 @@
         this.get_lyric_time();
       },
 
+      //取得此时的'播放时间'并传给歌词组件
       get_lyric_time(){
         this.lyric_time = this.$refs.audio.currentTime * 1000;
       },
 
+      //播放器中部的点击事件,控制歌词的显示和隐藏
       middle_click(){
         this.toggle_lyric = !this.toggle_lyric;
       }
@@ -342,7 +344,7 @@
       filter: blur(30px)
       opacity: 0.4
       &.opacity
-        opacity: 0.2
+        opacity: 0.3
     .player-color
       position: absolute
       z-index: -1

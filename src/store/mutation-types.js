@@ -1,5 +1,7 @@
 export const set_singer = "set_singer";
 
+export const set_songlist = "set_songlist";
+
 export const set_playing = "set_playing";
 
 export const set_full_screen = "set_full_screen";

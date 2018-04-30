@@ -12,7 +12,7 @@ export function slider_data(){
 export function songlist_data(){
   let data = Object.assign({},common_param,{
     sin: 0,//sin和ein表示选取歌单的数目.
-    ein: 29,
+    ein: 11,
     format: "json",
     categoryId: 10000000,
     sortId: 5,
@@ -24,4 +24,4 @@ export function songlist_data(){
   }).catch((e)=>{
     console.log(e);
   });
-}
+};

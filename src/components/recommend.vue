@@ -17,19 +17,19 @@
         <ul class="songlist">
           <li v-for="songlist_item in songlist_items_2d">
             <div v-for="item in songlist_item">
-              <div class="song-page">
-                <img v-lazy="item.imgurl"/>
+              <div class="song-page" @click="to_songlist_detail(item)">
+                <img v-lazy="item.url"/>
               </div>
-              <div class="song-name">{{item.dissname}}</div>
+              <div class="song-name">{{item.name}}</div>
               <div class="song-hot">
                 <i class="icon-logo"></i>
-                <span>107万</span>
+                <span>{{item.hot}}</span>
               </div>
             </div>
           </li>
         </ul>
       </div>
-
+      <router-view></router-view>
     </div>
   </scroll>
 </template>
@@ -39,6 +39,8 @@
   import Scroll from "base/scroll";
   import Loading from "base/loading";
   import {slider_data,songlist_data} from "api/recommend";
+  import class_songlist from "common/js/class_songlist";
+  import {mapMutations} from "vuex";
   export default {
     name: "Recommend",
     data(){
@@ -48,10 +50,6 @@
       }
     },
     components: {Slider,Scroll,Loading},
-    created(){
-      this.get_slider_data();
-      this.get_songlist_data();
-    },
     computed: {
       songlist_items_2d: function(){
         let items = [];
@@ -65,8 +63,15 @@
         return items;
       },
     },
-
+    created(){
+      this.get_slider_data();
+      this.get_songlist_data();
+    },
     methods: {
+      ...mapMutations([
+        "set_songlist"
+      ]),
+
       get_slider_data(){
         slider_data().then((res)=>{
           if(res.code === 0){
@@ -74,13 +79,24 @@
           }
         });
       },
+
       get_songlist_data(){
         songlist_data().then((res)=>{
           if(res.code === 0){
-            this.songlist_items = res.data.list;
+            let array = res.data.list;
+            this.songlist_items = array.map((value)=>{
+              return new class_songlist(value);
+            });
           }
         });
       },
+
+      to_songlist_detail(songlist){
+        this.$router.push({
+          path: `/recommend/${songlist.id}`,
+        });
+        this.set_songlist(songlist);
+      }
     },
   }
 </script>
@@ -90,6 +106,8 @@
 
   .recommend
     .slider-contain
+      position: relative
+      z-index: 9
       margin-top: 5px
       .swiper-slide
         a
@@ -103,7 +121,7 @@
       padding: 0 1%
       .songlist-head
         color: #666
-        box-shadow: 4px 0 4px -4px #666 inset
+        border-left: 2px solid #aaa
         margin: 20px 0 12px 0
         padding-left: 6px
         font-size: 14px
@@ -129,7 +147,7 @@
                 left: 0
                 width: 100%
                 height: 100%
-                background: rgba(0,0,0,0.15)
+                background: rgba(0,0,0,0.2)
             .song-name
               display: block
               width: 90%
@@ -139,16 +157,17 @@
             .song-hot
               display: flex
               position: absolute
+              align-items: center
               top: 5px
               right: 5px
               i
-                font-size: 11px
-                color: $color-1
-                margin-top: 2px
-                margin-right: 2px
-              >span
+                display: block
                 font-size: 10px
                 color: $color-1
-
+                margin-right: 4px
+              >span
+                display: block
+                font-size: 10px
+                color: $color-1
 
 </style>

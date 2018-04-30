@@ -44,5 +44,6 @@
     bottom: 0
     width: 100%
     overflow-y: scroll
+    -webkit-overflow-scrolling: touch
 
 </style>
