@@ -10,7 +10,6 @@
     >
       <loading class="loading" v-show = "!audio_is_ready"
         icon_class = "icon-loading_3"
-        color = "#019fde"
         :font_size = "9"
       >
       </loading>
@@ -121,4 +120,6 @@
       justify-content: center
       &.color
         background: $color-4
+      .loading
+        color: $color-4  
 </style>

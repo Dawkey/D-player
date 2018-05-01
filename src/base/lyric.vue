@@ -5,8 +5,7 @@
   >
     <loading class="loading" v-show="!lyric_items.length"
       icon_class = "icon-loading"
-      color = "rgb(1, 159, 222)"
-      :font_size = "30"
+      :font_size = "32"
     >
     </loading>
     <div class="half-space" ref="half_space"></div>
@@ -249,6 +248,7 @@
       top: 45%
       width: 100%
       justify-content: center
+      color: $color-4
     .half-space
       height: 45%
       width: 100%

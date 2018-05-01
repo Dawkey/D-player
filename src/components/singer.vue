@@ -1,20 +1,22 @@
 <template>
-  <Scroll :top="90">
-    <div class="singer">
-      <ul class="singer-list">
-        <li v-for="singer_item in singer_items">
-          <div class="page">
-            <img v-lazy="singer_item.url"/>
-          </div>
-          <div class="name">
-            {{singer_item.name}}
-            <i class="icon-player_play" @click="to_singer_detail(singer_item)"></i>
-          </div>
-        </li>
-      </ul>
-      <router-view></router-view>
-    </div>
-  </Scroll>
+  <div class="singer-contain">
+    <Scroll :top="90">
+      <div class="singer">
+        <ul class="singer-list">
+          <li v-for="singer_item in singer_items">
+            <div class="page">
+              <img v-lazy="singer_item.url"/>
+            </div>
+            <div class="name">
+              {{singer_item.name}}
+              <i class="icon-player_play" @click="to_singer_detail(singer_item)"></i>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </Scroll>
+    <router-view></router-view>
+  </div>
 </template>
 
 <script type="text/ecmascript-6">

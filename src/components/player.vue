@@ -332,7 +332,8 @@
 
 
   .player
-
+    position: relative
+    z-index: 10
     .player-background
       position: absolute
       z-index: -2
@@ -378,6 +379,11 @@
             color: $color-3
             display: block
             font-size: 25px
+        .song_name
+          margin: 0 50px
+          white-space: nowrap
+          text-overflow: ellipsis
+          overflow: hidden
       .middle
         position: absolute
         width: 100%
@@ -477,12 +483,11 @@
     .player_mini
       position: fixed
       bottom: 0
-      display: flex
-      justify-content: space-between
       width: 100%
       height: 50px
       background: $color-1
       overflow: hidden
+      opacity: 0.98
       .player-background
         opacity: 0.6
       i
@@ -490,24 +495,36 @@
         color: $color-4
         margin-left: 20px
       .left
-        height: 100%
         display: flex
         align-items: center
+        min-width: 0
+        height: 100%
+        margin-right: 100px
         .page
           height: 40px
           margin-left: 5px
           img
             height: 100%
         .song_name
+          overflow: hidden
           margin-left: 15px
           .name
             font-size: 13px
             color: #000
+            white-space: nowrap
+            text-overflow: ellipsis
+            overflow: hidden
           .singer
             font-size: 11px
             margin-top: 8px
             color: $color-3
+            white-space: nowrap
+            text-overflow: ellipsis
+            overflow: hidden
       .right
+        position: absolute
+        top: 0
+        right: 0
         display: flex
         align-items: center
         height: 100%

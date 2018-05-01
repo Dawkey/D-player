@@ -3,7 +3,9 @@
     <div class="back" @click="back">
       <i class="icon-back"></i>
     </div>
-    <span></span>
+    <span>
+      <slot></slot>
+    </span>
   </div>
 </template>
 
@@ -28,15 +30,20 @@
     left: 0
     display: flex
     align-items: center
-    justify-content: center
     width: 100%
     height: 50px
     color: $color-1
     i
       display: block
       font-size: 25px
-      color: $color-3
+      color: inherit
     .back
       position: absolute
       left: 15px
+    span
+      font-size: 17px
+      margin: 0 50px
+      white-space: nowrap
+      text-overflow: ellipsis
+      overflow: hidden
 </style>

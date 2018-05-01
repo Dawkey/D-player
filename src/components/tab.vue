@@ -33,6 +33,7 @@
       height: 80%
       box-sizing: border-box
       padding: 5px 25px 0
+      color: $color-3
     .router-link-active//在vue-router激活时,会给相关元素自动添加一个'router-link-active的class'
       color: $color-4
       box-shadow: 0 2px 2px -2px $color-4

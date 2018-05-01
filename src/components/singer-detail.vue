@@ -1,9 +1,15 @@
 <template>
   <div class="singer-detail">
-    <back :class="{background: back_flag}"></back>
+    <back class="back">{{back_text}}</back>
     <scroll class="scroll-container" :z_index="9" @scroll.native="scroll">
+      <div class="back-background">
+        <img :src="singer.url">
+      </div>
+      <div class="cover-background">
+        <img :src="singer.url">
+      </div>
       <div class="content" ref="content" :style="{'background-image': `url(${singer.url})`}">
-        <div class="content-color" :style="content_color_style">
+        <div class="content-color">
         </div>
       </div>
       <song-list :song_items="song_items" class="song-list"></song-list>
@@ -23,10 +29,7 @@
     data(){
       return {
         song_items: [],
-        scroll_obj: {},
-        content_color: 0,
-        content_opacity: 0.2,
-        back_flag: false,
+        back_text: "",
       };
     },
     components: {Back,Scroll,SongList},
@@ -37,13 +40,6 @@
       ...mapGetters([
         "singer"
       ]),
-      content_color_style(){
-        let color = Math.floor(this.content_color);
-        let opacity = this.content_opacity;
-        return {
-          background: `rgb(${color},${color},${color},${opacity})`
-        };
-      },
     },
     methods: {
       //取得歌曲数据
@@ -58,32 +54,14 @@
         });
       },
 
-      scroll_handle(){
-        let scroll_obj = this.scroll_obj;
-        scroll_obj.height = this.$refs.content.clientHeight - 70;
-        scroll_obj.color = 185 / scroll_obj.height;
-        scroll_obj.opacity = 0.8 / scroll_obj.height;
+      scroll(e){
+        if(e.target.scrollTop >= this.$refs.content.clientHeight){
+          this.back_text = this.singer.name;
+        }else{
+          this.back_text = "";
+        }
       },
 
-      scroll(e){
-        let scroll_obj = this.scroll_obj;
-        let scroll_top = e.target.scrollTop;
-        let height = this.$refs.content.clientHeight - 70;
-        if(height != scroll_obj.height){
-          this.scroll_handle();
-        }
-        let offset = scroll_obj.height - scroll_top;
-        if(offset > 0){
-          this.back_flag = false;
-          this.content_color = scroll_obj.color * scroll_top;
-          this.content_opacity = 0.2 + scroll_obj.opacity * scroll_top;
-        }else if(offset <= 0){
-          this.back_flag = true;
-          this.content_color = 185;
-          this.content_opacity = 1;
-          this.back_flag = true;
-        }
-      }
     },
   }
 </script>
@@ -98,22 +76,68 @@
     width: 100%
     height: 100%
     background: $color-1
-    .background
-      background: $color-2
+    .back
+      color: $color-1
     >.scroll-container
+      .back-background
+        position: fixed
+        z-index: 9
+        top: 0
+        left: 0
+        width: 100%
+        height: 50px
+        background: $color-1
+        overflow: hidden
+        opacity: 0.98
+        &:before
+          content: ""
+          position: absolute
+          z-index: -1
+          top: 0
+          left: 0
+          width: 100%
+          height: 100%
+          background: rgba(0,0,0,0.1)
+        img
+          position: absolute
+          z-index: -2
+          top: 0
+          left: 0
+          width: 100%
+          height: 100%
+          object-fit: cover
+          filter: blur(30px)
+          opacity: 0.5
+      .cover-background
+        position: absolute
+        z-index: 7
+        top: 0
+        left: 0
+        width: 100%
+        height: 47%
+        overflow: hidden
+        &:before
+          content: ""
+          position: absolute
+          top: 0
+          left: 0
+          width: 100%
+          height: 100%
+          background: rgba(0,0,0,0.1)
+        img
+          width: 100%
       >.content
         position: relative
-        z-index: 9
+        z-index: 10
         height: 45%
         background-repeat: no-repeat
         background-size: cover
         .content-color
           width: 100%
           height: 100%
-          background: rgba(0,0,0,0.2)
+          background: rgba(0,0,0,0.1)
       >.song-list
         position: relative
-        z-index: 10
-        margin-top: -8px
+        z-index: 8
 
 </style>

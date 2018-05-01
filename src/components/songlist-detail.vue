@@ -1,15 +1,14 @@
 <template>
   <div class="songlist-detail">
-    <back class="back">
-    </back>
-    <scroll class="scroll-container" :z_index="9">
+    <back class="back">{{back_text}}</back>
+    <scroll class="scroll-container" :z_index="9" @scroll.native="scroll">
       <div class="back-background">
         <img class="background-img" :src="songlist.url"/>
       </div>
       <div class="cover-background">
         <img class="background-img" :src="songlist.url"/>
       </div>
-      <div class="content">
+      <div class="content" ref="content">
         <img class="background-img" :src="songlist.url"/>
         <div class="content-body">
           <div class="page">
@@ -52,6 +51,7 @@
       return {
         song_items: [],
         creator_page: "",
+        back_text: "",
       };
     },
     computed: {
@@ -64,6 +64,7 @@
       this.get_detail_data();
     },
     methods: {
+
       get_detail_data(){
         songlist_detail_data(this.songlist.id).then((res)=>{
           if(res.code == 0){
@@ -75,7 +76,16 @@
             });
           }
         });
+      },
+
+      scroll(e){
+        if(e.target.scrollTop >= this.$refs.content.clientHeight){
+          this.back_text = this.songlist.name;
+        }else{
+          this.back_text = "";
+        }
       }
+
     }
   }
 </script>
@@ -101,6 +111,8 @@
       object-fit: cover
       filter: blur(30px)
       opacity: 0.4
+    .back
+      color: $color-3
     .scroll-container
       .back-background
         position: fixed

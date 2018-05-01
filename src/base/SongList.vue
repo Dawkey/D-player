@@ -1,5 +1,10 @@
 <template>
   <div class="song-list">
+    <loading class="loading" v-show="!song_items.length"
+      icon_class = "icon-loading"
+      :font_size = "32"
+    >
+    </loading>
     <ul>
       <li class="play_all">
         <i class="icon-player_play"></i>
@@ -27,6 +32,7 @@
 
 <script type="text/ecmascript-6">
   import {mapGetters,mapActions} from "vuex";
+  import Loading from "base/loading";
   export default {
     name: "SongList",
     props: {
@@ -42,6 +48,7 @@
         "play_song"
       ]),
     },
+    components: {Loading},
     methods: {
       ...mapActions([
         "set_player",
@@ -62,6 +69,13 @@
   @import "~common/stylus/variable.styl"
 
   .song-list
+    .loading
+      position: absolute
+      z-index: 10
+      top: 48px
+      width: 100%
+      justify-content: center
+      color: $color-3
     ul
       padding-bottom: 25px
       background: $color-1

@@ -1,6 +1,6 @@
 <template>
   <div class="loading-contain">
-    <i :class="icon_class" :style="icon_style"></i>
+    <i :class="icon_class" :style="icon_style" v-show="show"></i>
   </div>
 </template>
 
@@ -14,22 +14,21 @@
       },
       font_size: {
         type: Number,
-        default: 25
-      },
-      color: {
-        type: String,
-        default: "#666"
+        default: 24
       },
       time: {
         type: Number,
         default: 1
+      },
+      show: {
+        type: Boolean,
+        default: true
       }
     },
     computed: {
       icon_style(){
         return {
           "font-size": `${this.font_size}px`,
-          "color": this.color,
           "animation-duration": `${this.time}s`,
         };
       }
@@ -47,6 +46,6 @@
   .loading-contain
     display: flex
     i
-      display: block
       animation: rotate 1s linear infinite
+      color: inherit
 </style>
