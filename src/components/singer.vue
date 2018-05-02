@@ -36,7 +36,9 @@
       this.get_singer_data();
     },
     methods: {
-      ...mapMutations(["set_singer"]),
+      ...mapMutations([
+        "set_singer"
+      ]),
 
       //取得歌手数据
       get_singer_data(){
@@ -51,11 +53,11 @@
       },
 
       //跳转到歌手详情页面
-      to_singer_detail(class_singer){
+      to_singer_detail(singer){
         this.$router.push({
-          path: `/singer/${class_singer.id}`,
+          path: `/singer/${singer.id}`,
         });
-        this.set_singer(class_singer);
+        this.set_singer(singer);
       },
     }
   }

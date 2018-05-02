@@ -1,6 +1,6 @@
 const common_param = {
   g_tk: 5381,
-  inCharset: "utf8",
+  inCharset: "utf-8",
   outCharset: "utf-8",
   platform: "yqq",
   notice: 0,

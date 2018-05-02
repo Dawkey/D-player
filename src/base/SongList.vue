@@ -9,6 +9,9 @@
       <li class="play_all">
         <i class="icon-player_play"></i>
         播放全部
+        <span class="song-num" v-show="song_items.length">
+          (共{{song_items.length}}首)
+        </span>
       </li>
       <li v-for="(song_item,index) in song_items" @click="to_player(song_items,index)">
         <div class="index">
@@ -89,6 +92,10 @@
           color: #999
           font-size: 22px
           margin-right: 8px
+        .song-num
+          font-size: 13px
+          color: #999
+          margin-left: 3px
       li
         position: relative
         display: flex

@@ -11,12 +11,16 @@ const Rank = () => import("components/rank");
 const Songlist = () => import("components/songlist");
 const SonglistDetail = () => import("components/songlist-detail");
 const SingerDetail = () => import("components/singer-detail");
+const RankDetail = () => import("components/rank-detail");
 
 
 export default new Router({
   //这里是routes不是routers!!!!!!!!!!!!!!!!!!!(T＿T)
   routes: [
+
     {path: "/",redirect: "/singer"},//重新定向到"/recommend"
+
+
     {
 
       path: "/recommend",
@@ -51,6 +55,15 @@ export default new Router({
     },
 
 
-    {path: "/rank",component: Rank},
+    {
+      path: "/rank",
+      component: Rank,
+      children: [{
+        path: ":id",
+        component: RankDetail,
+      }],
+    },
+
   ],
+
 });

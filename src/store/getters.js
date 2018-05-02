@@ -2,6 +2,8 @@ export const singer = state => state.singer;
 
 export const songlist = state => state.songlist;
 
+export const rank = state => state.rank;
+
 export const playing = state => state.playing;
 
 export const full_screen = state => state.full_screen;

@@ -12,7 +12,7 @@
         <img class="background-img" :src="songlist.url"/>
         <div class="content-body">
           <div class="page">
-            <img :src="songlist.url">
+            <img :src="songlist.url"/>
             <div class="hot">
               <i class="icon-logo"></i>
               <span>{{songlist.hot}}</span>

@@ -7,6 +7,9 @@ const mutation = {
   [types.set_songlist](state,songlist){
     state.songlist = songlist;
   },
+  [types.set_rank](state,rank){
+    state.rank = rank;
+  },
   [types.set_playing](state,flag){
     state.playing = flag;
   },
