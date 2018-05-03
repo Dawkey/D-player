@@ -12,3 +12,16 @@ export function addClassName(el,className){
     el.className = array.join(" ");
   }
 }
+
+export function removeClassName(el,className){
+  if(hasClassName(el,className)){
+    let array = el.className.split(" ");
+    let new_array = [];
+    array.forEach((value)=>{
+      if(value != className){
+        new_array.push(value);
+      }
+    });
+    el.className = new_array.join(" ");
+  }
+}
