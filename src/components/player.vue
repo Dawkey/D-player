@@ -505,6 +505,7 @@
           margin-left: 5px
           img
             height: 100%
+            border-radius: 2px
         .song_name
           overflow: hidden
           margin-left: 15px

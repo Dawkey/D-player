@@ -1,13 +1,13 @@
 <template>
   <div class="singer-contain">
-    <Scroll :top="90">
+    <Scroll :top="90" @scroll.native="scroll">
       <div class="singer-class">
         <div class="class_text">
-          日本
-          <i class="icon-singer_female"></i>
+          {{this.choose_obj.text}}
+          <i :class="this.choose_obj.icon"></i>
         </div>
         <div class="class_icon" @click="toggle_choose">
-          <i class="icon-loading"></i>
+          <img src="static/img/icon-loading.svg" :class="{rotate_start: animate_flag}">
         </div>
         <div class="class_choose">
 
@@ -114,8 +114,20 @@
     data(){
       return {
         singer_items: [],
-        active_slide: null,
         choose_flag: false,
+        animate_flag: false,
+        close_flag: false,
+        lan_swiper: null,
+        sex_swiper: null,
+        lan_index: 1,
+        sex_index: 0,
+        choose_obj: {
+          key: "j_woman_all",
+          text: "日本",
+          icon: "icon-singer_female",
+          lan_index: 1,
+          sex_index: 0,
+        },
       };
     },
 
@@ -124,7 +136,7 @@
 
 
     mounted(){
-      this.get_singer_data();
+      this.get_singer_data(this.choose_obj.key);
       this.swiper_ini();
     },
 
@@ -135,9 +147,10 @@
       ]),
 
       //取得歌手数据
-      get_singer_data(){
-        singer_data().then((res)=>{
+      get_singer_data(key){
+        singer_data(key).then((res)=>{
           if(res.code == 0){
+            this.animate_flag = false;
             let array = res.data.list;
             this.singer_items = array.map((value)=>{
               return new class_singer(value.Fsinger_name,value.Fsinger_mid);
@@ -155,30 +168,133 @@
       },
 
       swiper_ini(){
-
-        let language_swiper_ini = new Swiper(".language",{
+        let that = this;
+        this.lan_swiper = new Swiper(".language",{
           loop: true,
           direction: "vertical",
           slidesPerView: 2,
           slideNextClass: "active-slide",
+          on: {
+            slideChangeTransitionEnd(){
+              let index = this.realIndex;
+              that.lan_index = index == 3 ? 0 : index + 1;
+            }
+          },
         });
 
-        let sex_swiper_ini = new Swiper(".sex",{
+        this.sex_swiper = new Swiper(".sex",{
           loop: true,
           direction: "vertical",
           slidesPerView: 2,
           slideActiveClass: "active-slide",
           on: {
             slideChangeTransitionEnd(){
-            },
-          }
+              that.sex_index = this.realIndex;
+            }
+          },
         });
-
       },
 
       toggle_choose(){
+        if(this.animate_flag || this.close_flag){
+          return;
+        }
         this.choose_flag = !this.choose_flag;
+        if(!this.choose_flag){
+          let old_obj = this.choose_obj;
+          if(old_obj.lan_index == this.lan_index && old_obj.sex_index == this.sex_index){
+            return;
+          }
+          let new_obj = this.index_to_obj(this.lan_index,this.sex_index);
+          if(new_obj){
+            this.choose_obj = new_obj;
+            this.animate_flag = true;
+            setTimeout(()=>{
+              this.get_singer_data(this.choose_obj.key);
+            },500);
+          }
+        }
       },
+
+      index_to_obj(lan_index,sex_index){
+        let lan_obj = {};
+        let sex_obj = {};
+        switch (lan_index){//华语 日本 欧美 韩国
+          case 0:
+            lan_obj.key = "cn";
+            lan_obj.text = "华语";
+            break;
+          case 1:
+            lan_obj.key = "j";
+            lan_obj.text = "日本";
+            break;
+          case 2:
+            lan_obj.key = "eu";
+            lan_obj.text = "欧美";
+            break;
+          case 3:
+            lan_obj.key = "k";
+            lan_obj.text = "韩国";
+            break;
+          default:
+            lan_obj = null;
+        };
+        switch (sex_index){//女性 男性 团体
+          case 0:
+            sex_obj.key = "woman";
+            sex_obj.icon = "icon-singer_female";
+            break;
+          case 1:
+            sex_obj.key = "man";
+            sex_obj.icon = "icon-singer_man";
+            break;
+          case 2:
+            sex_obj.key = "team";
+            sex_obj.icon = "icon-singer_group";
+            break;
+          default:
+            sex_obj = null;
+        };
+        if(!(lan_obj && sex_obj)){
+          console.log("index不符 !!!");
+          return null;
+        }
+        let final_obj = {};
+        final_obj.key = `${lan_obj.key}_${sex_obj.key}_all`;
+        final_obj.text = lan_obj.text;
+        final_obj.icon = sex_obj.icon;
+        final_obj.lan_index = lan_index;
+        final_obj.sex_index = sex_index;
+        return final_obj;
+      },
+
+      choose_close(){
+        let lan_next_index = this.choose_obj.lan_index
+        let sex_index = this.choose_obj.sex_index;
+        if(lan_next_index == this.lan_index && sex_index == this.sex_index){
+          this.choose_flag = false;
+          return;
+        }
+        this.close_flag = true;
+        let lan_index = lan_next_index == 0 ? 3 : lan_next_index - 1;
+        this.lan_swiper.slideToLoop(lan_index,500,true);
+        this.sex_swiper.slideToLoop(sex_index,500,true);
+        setTimeout(()=>{
+          this.choose_flag = false;
+        },500);
+        setTimeout(()=>{
+          this.close_flag = false;
+        },1000);
+      },
+
+      scroll(){
+        if(this.close_flag){
+          return;
+        }
+        if(this.choose_flag){
+          this.choose_close();
+        }
+      }
 
     }
 
@@ -187,6 +303,12 @@
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable.styl"
+
+  @keyframes rotate
+    0%
+      transform: rotate(0)
+    100%
+      transform: rotate(360deg)
 
   .singer-contain
     .singer-class
@@ -216,10 +338,14 @@
         border-radius: 50%
         margin-left: -10px
         background: rgba(245,245,245,0.5)
-        i
+        >img
           display: block
-          font-size: 36px
-          color: $color-4
+          width: 36px
+          height: 36px
+          animation: rotate 1s linear infinite
+          animation-play-state: paused
+          &.rotate_start
+            animation-play-state: running
       .class_choose
         position: absolute
         top: 0
@@ -270,16 +396,17 @@
           transition: height 0.5s
           &.choose_height
             height: 60px
-          .class_text
-            display: flex
-            align-items: center
-            width: 24px
-            height: 16px
-            padding-left: 15px
-            padding-right: 15px
-            i
-              font-size: 12px
-              color: inherit
+          .sex
+            .class_text
+              display: flex
+              align-items: center
+              width: 24px
+              height: 16px
+              padding-left: 15px
+              padding-right: 15px
+              i
+                font-size: 12px
+                color: inherit
 
     .singer
       .singer-list
