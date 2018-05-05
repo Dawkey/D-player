@@ -51,7 +51,6 @@
           <div class="player_mode">
             <i :class="toggle_mode_icon" @click="toggle_mode">
             </i>
-            <i class="loop_num" v-show="this.play_mode==1">1</i>
           </div>
           <div class="player_control">
             <i class="icon-player_prev" @click="prev_song"></i>
@@ -85,6 +84,7 @@
         <i class="icon-player_list"></i>
       </div>
     </div>
+    <player-song-list class="player-song-list" :song_items="play_order_list"></player-song-list>
     <audio :src="play_song.audio" ref="audio"
       @canplay="audio_ready"
       @timeupdate="time_update"
@@ -99,6 +99,7 @@
   import {time_minute,shuffle} from "common/js/common_function";
   import ProgressBar from "base/ProgressBar";
   import Lyric from "base/lyric";
+  import PlayerSongList from "base/PlayerSongList";
 
   export default {
     name: "Player",
@@ -114,7 +115,7 @@
         toggle_lyric: false,
       };
     },
-    components: {ProgressBar,Lyric},
+    components: {ProgressBar,Lyric,PlayerSongList},
     computed: {
       ...mapGetters([
         "play_list",
@@ -143,12 +144,12 @@
       //控制播放模式图标
       toggle_mode_icon(){
         let mode = this.play_mode;
-        return mode == 2 ? "icon-player_random" : "icon-player_order";
+        return mode == 2 ? "icon-player_random" : mode == 1 ? "icon-player_loop" : "icon-player_order";
       },
 
     },
     mounted(){
-      this.$refs.audio.volume = 0.1;
+      this.$refs.audio.volume = 0;
     },
     methods: {
       ...mapMutations([
@@ -448,10 +449,14 @@
           justify-content: space-between
           align-items: center
           font-size: 10px
+          height: 13px
           color: $color-3
           margin: 0 20px 20px
           .active_time
             opacity: 0.8
+            line-height: 13px
+          .total_time
+            line-height: 13px
         .button
           display: flex
           justify-content: space-between
@@ -460,25 +465,23 @@
           i
             font-size: 22px
             color: $color-3
-            opacity: 0.9
-          .player_mode
-            position: relative
-            .loop_num
-              position: absolute
-              top: 3px
-              left: 7px
-              font-size: 5px
-              z-index : -1
+            opacity: 0.5
           .player_control
             display: flex
             padding: 5px 2px
             justify-content: space-between
             align-items: center
             width: 56%
+            >i
+              display: block
+              padding: 1px
+              overflow: auto
+              opacity: 0.8
             i:nth-child(odd)
-              font-size: 36px
+              font-size: 38px
             i:nth-child(2)
-              font-size: 47px
+              width: 50px
+              font-size: 48px
               opacity: 0.9
     .player_mini
       position: fixed
@@ -530,5 +533,9 @@
         align-items: center
         height: 100%
         margin-right: 15px
-
+    .player-song-list
+      position: fixed
+      bottom: 0
+      width: 100%
+      height: 60%
 </style>

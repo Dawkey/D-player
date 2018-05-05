@@ -96,7 +96,7 @@
 
   .progress_bar
     position: relative
-    height: 2px
+    height: 1.5px
     width: 100%
     border-radius: 1px
     margin: 0 15px
@@ -121,5 +121,5 @@
       &.color
         background: $color-4
       .loading
-        color: $color-4  
+        color: $color-4
 </style>

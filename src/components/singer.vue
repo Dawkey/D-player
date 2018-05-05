@@ -167,6 +167,7 @@
         this.set_singer(singer);
       },
 
+      //对swiper的初始化
       swiper_ini(){
         let that = this;
         this.lan_swiper = new Swiper(".language",{
@@ -181,7 +182,6 @@
             }
           },
         });
-
         this.sex_swiper = new Swiper(".sex",{
           loop: true,
           direction: "vertical",
@@ -195,6 +195,7 @@
         });
       },
 
+      //对应于歌手分类按钮的点击事件
       toggle_choose(){
         if(this.animate_flag || this.close_flag){
           return;
@@ -216,6 +217,7 @@
         }
       },
 
+      //把swiper滑动后选项栏对应的index转换为我们需要的有用的一个对象
       index_to_obj(lan_index,sex_index){
         let lan_obj = {};
         let sex_obj = {};
@@ -268,6 +270,7 @@
         return final_obj;
       },
 
+      //歌手分类块的关闭
       choose_close(){
         let lan_next_index = this.choose_obj.lan_index
         let sex_index = this.choose_obj.sex_index;
@@ -287,6 +290,7 @@
         },1000);
       },
 
+      //在用户滑动滚动条时,执行choose_close事件
       scroll(){
         if(this.close_flag){
           return;
