@@ -10,6 +10,9 @@ const mutation = {
   [types.set_rank](state,rank){
     state.rank = rank;
   },
+  [types.set_songlist_id](state,songlist_id){
+    state.songlist_id = songlist_id;
+  },
   [types.set_playing](state,flag){
     state.playing = flag;
   },
@@ -33,6 +36,13 @@ const mutation = {
   },
   [types.set_play_lyric](state,lyric){
     state.play_list[state.play_index].lyric = lyric;
+  },
+  [types.set_play_songlist_id](state,songlist_id){
+    state.play_songlist_id = songlist_id;
+  },
+  [types.delete_play_song](state,{index,order_index}){
+    state.play_list.splice(index,1);
+    state.play_order_list.splice(order_index,1);
   }
 };
 

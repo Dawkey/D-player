@@ -143,7 +143,8 @@
 
     methods: {
       ...mapMutations([
-        "set_singer"
+        "set_singer",
+        "set_songlist_id"
       ]),
 
       //取得歌手数据
@@ -164,6 +165,8 @@
         this.$router.push({
           path: `/singer/${singer.id}`,
         });
+        let id = `singer-${singer.id}`;
+        this.set_songlist_id(id);
         this.set_singer(singer);
       },
 

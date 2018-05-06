@@ -15,15 +15,16 @@
       </li>
       <li v-for="(song_item,index) in song_items" @click="to_player(song_items,index)">
         <div class="index">
-          {{index + 1}}
+          <span v-show="!active_song(index)">{{index + 1}}</span>
+          <i v-show="active_song(index)" class="icon-logo"></i>
         </div>
         <div class="content">
-            <div class="name">
-              {{song_item.name}}
-            </div>
-            <div class="album">
-              {{song_item.singer}} - {{song_item.album}}
-            </div>
+          <div class="name">
+            {{song_item.name}}
+          </div>
+          <div class="album">
+            {{song_item.singer}} - {{song_item.album}}
+          </div>
         </div>
         <div class="time">
           {{song_item.time_minute}}
@@ -48,23 +49,37 @@
     },
     computed: {
       ...mapGetters([
-        "play_song"
+        "play_song",
+        "play_songlist_id",
+        "songlist_id"
       ]),
+      active_index(){
+        if(this.play_songlist_id !== this.songlist_id){
+          return -1;
+        }
+        return this.song_items.findIndex((item)=>{
+          return item.id == this.play_song.id;
+        });
+      }
     },
     components: {Loading},
     methods: {
       ...mapActions([
-        "set_player",
-        "set_song_audio"
+        "set_player"
       ]),
       //跳转到player播放器
       to_player(list,index){
         this.set_player({list,index});
-        if(this.play_song.audio == ""){
-          this.set_song_audio();
-        }
       },
-    }
+
+      active_song(index){
+        if(this.play_songlist_id !== this.songlist_id){
+          return false;
+        }
+        return index === this.active_index;
+      },
+
+    },
   }
 </script>
 
@@ -106,6 +121,13 @@
           width: 50px
           font-size: 16px
           text-align: center
+          >i
+            position: absolute
+            top: 0
+            left: 12px
+            font-size: 20px
+            line-height: 50px
+            color: $color-4
         .content
           display: flex
           flex-direction: column

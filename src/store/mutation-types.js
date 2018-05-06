@@ -4,6 +4,8 @@ export const set_songlist = "set_songlist";
 
 export const set_rank = "set_rank";
 
+export const set_songlist_id = "set_songlist_id";
+
 export const set_playing = "set_playing";
 
 export const set_full_screen = "set_full_screen";
@@ -19,3 +21,7 @@ export const set_play_index = "set_play_index";
 export const set_play_audio = "set_play_audio";
 
 export const set_play_lyric = "set_play_lyric";
+
+export const set_play_songlist_id = "set_play_songlist_id";
+
+export const delete_play_song = "delete_play_song";

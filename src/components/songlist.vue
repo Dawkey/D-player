@@ -68,7 +68,8 @@
     methods: {
 
       ...mapMutations([
-        "set_songlist"
+        "set_songlist",
+        "set_songlist_id"
       ]),
 
       get_songlist_data(start,end){
@@ -111,6 +112,8 @@
         this.$router.push({
           path: `/recommend/songlist/${songlist.id}`,
         });
+        let id = `songlist-${songlist.id}`;
+        this.set_songlist_id(id);
         this.set_songlist(songlist);
       },
 

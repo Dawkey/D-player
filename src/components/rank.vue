@@ -50,7 +50,8 @@
     methods: {
 
       ...mapMutations([
-        "set_rank"
+        "set_rank",
+        "set_songlist_id"
       ]),
 
       get_rank_data(){
@@ -71,6 +72,8 @@
         this.$router.push({
           path: `/rank/${rank.id}`,
         });
+        let id = `rank-${rank.id}`;
+        this.set_songlist_id(id);
         this.set_rank(rank);
       },
 
