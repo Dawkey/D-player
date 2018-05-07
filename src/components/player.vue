@@ -85,12 +85,14 @@
       </div>
     </div>
     <transition name="cover">
-      <div class="cover" @click="playerlist_hide" v-show="playerlist_flag"></div>
+      <div class="cover" @click="playerlist_hide" v-show="playerlist_flag">
+      </div>
     </transition>
     <transition name="player-list">
-      <player-list class="player-list" v-show="playerlist_flag"></player-list>
+      <player-list class="player-list" v-show="playerlist_flag" :flag="playerlist_flag">
+      </player-list>
     </transition>
-    <audio :src="play_song.audio" ref="audio"
+    <audio :src="audio_src" ref="audio"
       @canplay="audio_ready"
       @timeupdate="time_update"
       @ended="ended"
@@ -129,8 +131,18 @@
         "full_screen",
         "playing",
         "play_index",
-        "play_order_index"
+        "play_order_index",
+        "play_first"
       ]),
+
+      audio_src(){
+        if(this.play_first){
+          return "static/audio/blank.m4a";
+        }else{
+          if(!this.play_list.length){return ""};
+          return this.play_song.audio;
+        }
+      },
 
       //控制播放和暂停图标
       toggle_playing_icon(){
@@ -196,11 +208,13 @@
 
       //记录audio准备好了
       audio_ready(){
+        if(this.play_first){return;}
         this.audio_is_ready = true;
       },
 
       //控制'显示时间'随着歌曲播放而变化.
       time_update(e){
+        if(this.play_first){return;}
         if(!this.bar_is_move){
           this.current_time = time_minute(e.target.currentTime);
         }
@@ -208,6 +222,7 @@
 
       //一首歌曲播放完之后的相关逻辑
       ended(){
+        if(this.play_first){return;}
         //play_mode为 1时,表示单曲循环
         if(this.play_mode == 1){
           this.$refs.audio.currentTime = 0;
@@ -260,6 +275,12 @@
         }
       },
       play_song(){
+        if(!this.play_list.length){
+          this.audio_is_ready = false;
+          this.playerlist_flag = false;
+          this.precent = 0;
+          return;
+        }
         if(this.play_song.id == this.song_id){
           return;
         }
@@ -274,6 +295,9 @@
         this.disc_rotate_num++;
       },
       playing(){
+        if(!this.play_list.length){
+          return;
+        }
         if(this.audio_is_ready){
           let $audio = this.$refs.audio;
           this.playing ? $audio.play() : $audio.pause();
@@ -330,9 +354,9 @@
       width: 100%
       height: 100%
       background: rgba(255,255,255,0.1)
-
     .player_full
       position: fixed
+      z-index: 9
       top: 0
       bottom: 0
       width: 100%
@@ -460,6 +484,7 @@
               opacity: 0.9
     .player_mini
       position: fixed
+      z-index: 8
       bottom: 0
       width: 100%
       height: 50px
@@ -514,6 +539,7 @@
       opacity: 0
     .cover
       position: fixed
+      z-index: 10
       top: 0
       bottom: 0
       width: 100%
@@ -524,6 +550,7 @@
       transform: translateY(100%)
     .player-list
       position: fixed
+      z-index: 10
       bottom: 0
       width: 100%
       height: 60%

@@ -1,6 +1,6 @@
 <template>
 
-    <div class="player-list">
+    <div class="player-list" ref="player_list">
       <div class="header">
         <div class="player-mode" @click="toggle_mode">
           <i :class="toggle_mode_icon"></i>
@@ -8,9 +8,9 @@
             {{toggle_mode_text}}
           </div>
         </div>
-        <i class="icon-clear_all"></i>
+        <i class="icon-clear_all" @click="clear_song"></i>
       </div>
-      <scroll :top="45" class="scroll">
+      <scroll :top="45" class="scroll" id="scroll" ref="scroll">
         <ul class="songlist">
           <li v-for="(song_item,index) in play_order_list">
             <div class="song-item-contain" @click="select_song(index)">
@@ -37,6 +37,12 @@
   export default {
     name: "PlayerList",
     mixins: [play_mode_mixin],
+    props: {
+      flag: {
+        type: Boolean,
+        default: false
+      },
+    },
     components: {Scroll},
     computed: {
       ...mapGetters([
@@ -50,7 +56,8 @@
     methods: {
       ...mapActions([
         "playerlist_select",
-        "playerlist_delete"
+        "playerlist_delete",
+        "playerlist_clear"
       ]),
 
       active_song(index){
@@ -64,7 +71,21 @@
       delete_song(index){
         this.playerlist_delete(index);
       },
+
+      clear_song(){
+        this.playerlist_clear();
+      }
     },
+    watch: {
+      flag(){
+        if(!this.flag){
+          return;
+        }
+        let half_height = (this.$refs.player_list.clientHeight - 45) / 90;
+        let scroll_top = (this.play_order_index + 1 - Math.round(half_height))  * 45;
+        this.$refs.scroll.$el.scrollTop = scroll_top;
+      }
+    }
 
   }
 </script>
@@ -99,6 +120,8 @@
         color: #666
     .scroll
       position: absolute
+      &#scroll
+        padding-bottom: 0
       .songlist
         padding-left: 2.5%
         li

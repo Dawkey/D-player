@@ -111,9 +111,9 @@
       top: -5px
       width: 4px
       height: 4px
+      border: 4px solid $color-3
       border-radius: 50%
       background: $color-3
-      border: 4px solid $color-3
       opacity: 0.75
       display: flex
       align-items: center

@@ -24,6 +24,8 @@ export const play_song = (state) => {
 
 export const play_songlist_id = state => state.play_songlist_id;
 
+export const play_first = state => state.play_first;
+
 
 export const play_order_index = (state) => {
   if(state.play_mode === 2){

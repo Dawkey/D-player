@@ -238,6 +238,9 @@
 <style scoped lang="stylus" rel="stylesheet/stylus">
   @import "~common/stylus/variable.styl"
 
+  .lyric-contain::-webkit-scrollbar
+    display: none
+
   .lyric-contain
     position: relative
     height: 100%

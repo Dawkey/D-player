@@ -10,6 +10,7 @@ const state = {
   play_order_list: [],
   play_index: -1,
   play_songlist_id: "",//标记当前播放歌曲的songlist
+  play_first: true,
 };
 
 export default state;

@@ -49,6 +49,10 @@ export function playerlist_select({commit,state},index){
 };
 
 export function playerlist_delete({commit,state},index){
+  if(state.play_list.length === 1){
+    playerlist_clear({commit,state});
+    return;
+  }
   let id = state.play_order_list[index].id;
   let current_index = state.play_index;
   let order_index = index;
@@ -65,4 +69,12 @@ export function playerlist_delete({commit,state},index){
     current_index = current_index - 1;
     commit(types.set_play_index,current_index);
   }
+};
+
+export function playerlist_clear({commit,state}){
+  commit(types.set_play_order_list,[]);
+  commit(types.set_play_list,[]);
+  commit(types.set_play_index,-1);
+  commit(types.set_play_songlist_id,"");
+  commit(types.set_full_screen,false);
 }

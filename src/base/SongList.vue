@@ -7,7 +7,7 @@
     </loading>
     <ul>
       <li class="play_all">
-        <i class="icon-player_play"></i>
+        <i class="icon-player_play" @click="to_player(song_items,0)"></i>
         播放全部
         <span class="song-num" v-show="song_items.length">
           (共{{song_items.length}}首)
@@ -35,7 +35,7 @@
 </template>
 
 <script type="text/ecmascript-6">
-  import {mapGetters,mapActions} from "vuex";
+  import {mapGetters,mapMutations,mapActions} from "vuex";
   import Loading from "base/loading";
   export default {
     name: "SongList",
@@ -51,7 +51,8 @@
       ...mapGetters([
         "play_song",
         "play_songlist_id",
-        "songlist_id"
+        "songlist_id",
+        "play_first"
       ]),
       active_index(){
         if(this.play_songlist_id !== this.songlist_id){
@@ -64,11 +65,18 @@
     },
     components: {Loading},
     methods: {
+      ...mapMutations([
+        "set_play_first"
+      ]),
       ...mapActions([
         "set_player"
       ]),
       //跳转到player播放器
       to_player(list,index){
+        let $audio = document.querySelector("audio");
+        $audio.play();
+        $audio.pause();
+        this.set_play_first(false);
         this.set_player({list,index});
       },
 
@@ -95,7 +103,7 @@
       justify-content: center
       color: $color-3
     ul
-      padding-bottom: 25px
+      padding-bottom: 2px
       background: $color-1
       border-radius: 8px 8px 0 0
       .play_all

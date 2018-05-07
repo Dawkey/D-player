@@ -18,7 +18,7 @@ export default new Router({
   //这里是routes不是routers!!!!!!!!!!!!!!!!!!!(T＿T)
   routes: [
 
-    {path: "/",redirect: "/singer"},//重新定向到"/recommend"
+    {path: "/",redirect: "/recommend"},//重新定向到"/recommend"
 
 
     {

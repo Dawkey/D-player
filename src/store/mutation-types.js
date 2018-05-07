@@ -24,4 +24,6 @@ export const set_play_lyric = "set_play_lyric";
 
 export const set_play_songlist_id = "set_play_songlist_id";
 
+export const set_play_first = "set_play_first";
+
 export const delete_play_song = "delete_play_song";
