@@ -27,3 +27,24 @@ QQ音乐,主要通过`jsonp`跨域请求,必要时通过`axios`伪造`referer`�
 * 滚动使用的是浏览器本身的滚动;
 * 音频文件接口获取(audio地址):先根据歌曲`id`
 取得`vkey`数据,根据`id`和`vkey`拼凑出audio地址.
+
+### 5. 截图:
+<style>
+ .pic_div{
+   display: flex;
+   flex-wrap: wrap;
+ }
+ .pic_div>div{
+   width: 250px;
+   margin: 8px 8px 0 0;
+ }
+</style>
+<div class="pic_div">
+  <div><img src="pic_show/recommend.png"></div>
+  <div><img src="pic_show/singer.png"></div>
+  <div><img src="pic_show/singer_detail.png"></div>
+  <div><img src="pic_show/player.png"></div>
+  <div><img src="pic_show/player_lyric.png"></div>
+  <div><img src="pic_show/songlist_detail.png"></div>
+  <div><img src="pic_show/playerlist.png"></div>
+</div>
