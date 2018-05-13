@@ -7,7 +7,7 @@ export function singer_detail_data(id){
   let url = "https://c.y.qq.com/v8/fcg-bin/fcg_v8_singer_track_cp.fcg";
   let data = Object.assign({},common_param,singer_mid,{
     begin: 0,
-    num: 30,
+    num: 50,
     format: "jsonp",
     order: "listen",
     songstatus: 1,

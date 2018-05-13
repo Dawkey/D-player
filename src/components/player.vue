@@ -1,7 +1,11 @@
 <template>
   <div class="player" v-show="play_list.length">
     <div class="player_full" v-show="full_screen">
-      <img class="player-background" :src="play_song.img" :class="{opacity: toggle_lyric}"/>
+      <img class="player-background"
+        :src="img_src"
+        :class="{opacity: toggle_lyric}"
+        @error="img_error"
+      />
       <div class="player-color"></div>
       <div class="header">
         <div class="back" @click="to_player_mini">
@@ -17,7 +21,7 @@
             <img src="/static/img/disc_neddle.png"/>
           </div>
           <div class="disc_pan" :class="toggle_disc">
-            <img :src="play_song.img">
+            <img :src="img_src">
           </div>
         </div>
         <div class="lyric" v-show="toggle_lyric">
@@ -64,11 +68,11 @@
       </div>
     </div>
     <div class="player_mini" v-show="!full_screen" @click="to_player_full">
-      <img class="player-background" :src="play_song.img"/>
+      <img class="player-background" :src="img_src"/>
       <div class="player-color"></div>
       <div class="left">
         <div class="page">
-          <img :src="play_song.img">
+          <img :src="img_src">
         </div>
         <div class="song_name">
           <div class="name">
@@ -114,6 +118,7 @@
     mixins: [play_mode_mixin],
     data(){
       return {
+        img_error_flag: false,//判断图片加载是否发生错误
         audio_is_ready: false,//判断audio是否可以播放
         current_time: "00:00",
         precent: 0,
@@ -134,6 +139,13 @@
         "play_order_index",
         "play_first"
       ]),
+
+      img_src(){
+        if(this.img_error_flag){
+          return "static/img/default_disc.png";
+        }
+        return this.play_song.img;
+      },
 
       audio_src(){
         if(this.play_first){
@@ -160,7 +172,7 @@
 
     },
     mounted(){
-      this.$refs.audio.volume = 0.1;
+      this.$refs.audio.volume = 0.3;
     },
     methods: {
       ...mapMutations([
@@ -170,6 +182,13 @@
       ...mapActions([
         "set_song_audio",
       ]),
+
+      img_error(e){
+        if(e.target.src === "static/img/default_disc.png"){
+          return;
+        }
+        this.img_error_flag = true;
+      },
 
       to_player_mini(){
         this.set_full_screen(false);
@@ -290,6 +309,7 @@
         if(this.play_song.audio == ""){
           this.set_song_audio();
         }
+        this.img_error_flag = false;
         this.audio_is_ready = false;
         this.song_id = this.play_song.id;
         this.disc_rotate_num++;

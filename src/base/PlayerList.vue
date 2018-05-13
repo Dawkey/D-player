@@ -5,7 +5,7 @@
         <div class="player-mode" @click="toggle_mode">
           <i :class="toggle_mode_icon"></i>
           <div class="player-mode-text">
-            {{toggle_mode_text}}
+            {{`${toggle_mode_text}(${play_order_list.length})`}}
           </div>
         </div>
         <i class="icon-clear_all" @click="clear_song"></i>

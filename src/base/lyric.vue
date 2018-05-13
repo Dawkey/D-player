@@ -89,6 +89,10 @@
           let lyric = Base64.decode(_lyric.lyric);
           let trans = Base64.decode(_lyric.trans);
           this.lyric_items = lyric_array(lyric);
+          if(this.lyric_items.length === 0){
+            this.lyric_items = [{text: "没有歌词哦~"},{text: "(￣.￣)"}];
+            return;
+          }
           if(trans != ""){
             let trans_items = lyric_array(trans);
             if(trans_items.length == this.lyric_items.length){
