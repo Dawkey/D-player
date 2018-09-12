@@ -45,7 +45,7 @@ export const play_mode_mixin = {
       }
 
       let index = this.play_list.findIndex((new_song)=>{
-        return new_song.id == old_song.id;
+        return new_song.id == old_song.id
       });
       this.set_play_index(index);
     },
