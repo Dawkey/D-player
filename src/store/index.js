@@ -11,7 +11,7 @@ Vue.use(Vuex);
 
 const debug = process.env.NODE_ENV !== "production";
 
-export default new Vuex.Store({//Store s大写
+export default new Vuex.Store({
   state,
   getters,
   mutations,
