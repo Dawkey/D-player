@@ -1,7 +1,7 @@
 <template>
   <div class="recommend-contain">
     <scroll :top="90" class="scroll">
-      <loading class="loading" v-show="!(img_is_ready && songlist_items.length)"
+      <loading class="loading" v-show="!(songlist_items.length)"
         icon_class = "icon-loading"
         :font_size = "32"
       >
@@ -18,7 +18,7 @@
             </div>
           </slider>
         </div>
-        <div class="songlist-contain" v-if="img_is_ready && songlist_items.length">
+        <div class="songlist-contain" v-if="songlist_items.length">
           <div class="songlist-head" @click="to_songlist">
             <div class="songlist-dot">
             </div>
