@@ -20,7 +20,7 @@
     "vue-lazyload": "^1.2.2",
     "js-base64": "^2.4.3",
     "gsap": "^1.20.4",
-    "swiper": "^4.2.2"
+    "swiper": "^6.5.1"
   },
   "devDependencies": {
     "autoprefixer": "^7.1.2",
